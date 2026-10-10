@@ -1,0 +1,201 @@
+local W = _G.Willnzx
+if not W then warn("[cmds] Rode o gui_base primeiro"); return end
+
+local CoreGui = W.CoreGui
+local TS = W.TS
+local LP = W.LP
+
+local lista = {
+    {";cmdbar2", "Abre a barra de comando 2"},
+    {";cmds", "Abre/fecha esta lista"},
+    {";control", "Abre/fecha setas de chute"},
+    {";farmcoins", "Abre o farm de coins"},
+    {";loop goal a", "Loop auto-gol Gol A"},
+    {";loop goal b", "Loop auto-gol Gol B"},
+    {";unloop goal", "Para o loop do gol"},
+    {";gol a", "Chute único no Gol A"},
+    {";gol b", "Chute único no Gol B"},
+    {";tpgoal", "Teleporta + chuta + espeta"},
+    {";untpgoal", "Para o TP GOAL"},
+    {";defendgoal", "Ativa defesa"},
+    {";defendgol a", "Defende Gol A"},
+    {";defendgol b", "Defende Gol B"},
+    {";undefend", "Para defend"},
+    {";bringball", "Puxa a bola"},
+    {";unbringball", "Cancela bring"},
+    {";loopbring", "Puxa infinito"},
+    {";unloopbring", "Para loop bring"},
+    {";freezeball", "Congela bola"},
+    {";unfreezeball", "Para freeze"},
+    {";bugball", "Bola orbita"},
+    {";boostall", "Acelera bola"},
+    {";unboostall", "Para boost"},
+    {";boostmult 6", "Multiplicador 6x"},
+    {";skyball", "Bola pro céu"},
+    {";unskyball", "Para sky ball"},
+    {";touchgoal", "Chute ao encostar"},
+    {";untouchgoal", "Para touch"},
+    {";moveball", "Move Ball"},
+    {";unmoveball", "Para move ball"},
+    {";orbitball", "Bola orbita em curva"},
+    {";unorbitball", "Para orbit"},
+}
+
+pcall(function() CoreGui:FindFirstChild("WillnzxCmdsGUI"):Destroy() end)
+
+local SG = Instance.new("ScreenGui")
+SG.Name = "WillnzxCmdsGUI"
+SG.ResetOnSpawn = false
+SG.IgnoreGuiInset = true
+SG.ZIndexBehavior = Enum.ZIndexBehavior.Sibling
+SG.Enabled = false
+pcall(function() SG.Parent = CoreGui end)
+if not SG.Parent then SG.Parent = LP:WaitForChild("PlayerGui") end
+
+local CF = Instance.new("Frame")
+CF.Size = UDim2.new(0, 360, 0, 420)
+CF.Position = UDim2.new(0.5, -180, 0.5, -210)
+CF.BackgroundColor3 = Color3.fromRGB(15, 15, 25)
+CF.BackgroundTransparency = 0.15
+CF.BorderSizePixel = 0
+CF.Active = true
+CF.Draggable = true
+CF.ClipsDescendants = true
+CF.Parent = SG
+local c1 = Instance.new("UICorner"); c1.CornerRadius = UDim.new(0, 12); c1.Parent = CF
+local c2 = Instance.new("UIStroke")
+c2.Thickness = 1.5; c2.Color = Color3.fromRGB(180, 0, 255); c2.Transparency = 0.2
+c2.ApplyStrokeMode = Enum.ApplyStrokeMode.Border; c2.Parent = CF
+local c3 = Instance.new("UIGradient")
+c3.Color = ColorSequence.new({
+    ColorSequenceKeypoint.new(0, Color3.fromRGB(25, 15, 40)),
+    ColorSequenceKeypoint.new(1, Color3.fromRGB(10, 15, 30)),
+})
+c3.Rotation = 45; c3.Parent = CF
+
+local T = Instance.new("TextLabel")
+T.Size = UDim2.new(1, -90, 0, 22); T.Position = UDim2.new(0, 12, 0, 8)
+T.BackgroundTransparency = 1; T.Text = "📜 COMANDOS"
+T.TextColor3 = Color3.fromRGB(180, 0, 255); T.TextScaled = true
+T.Font = Enum.Font.GothamBold; T.TextXAlignment = Enum.TextXAlignment.Left; T.Parent = CF
+
+local MN = Instance.new("TextButton")
+MN.Size = UDim2.new(0, 26, 0, 26); MN.Position = UDim2.new(1, -62, 0, 8)
+MN.BackgroundColor3 = Color3.fromRGB(0, 0, 0); MN.BackgroundTransparency = 0.5
+MN.Text = "■"; MN.TextSize = 16; MN.TextColor3 = Color3.fromRGB(0, 230, 255)
+MN.Font = Enum.Font.GothamBold; MN.AutoButtonColor = false; MN.Parent = CF
+local mc = Instance.new("UICorner"); mc.CornerRadius = UDim.new(0, 5); mc.Parent = MN
+
+local CL = Instance.new("TextButton")
+CL.Size = UDim2.new(0, 26, 0, 26); CL.Position = UDim2.new(1, -32, 0, 8)
+CL.BackgroundColor3 = Color3.fromRGB(0, 0, 0); CL.BackgroundTransparency = 0.5
+CL.Text = "✕"; CL.TextSize = 16; CL.TextColor3 = Color3.fromRGB(255, 60, 60)
+CL.Font = Enum.Font.GothamBold; CL.AutoButtonColor = false; CL.Parent = CF
+local clc = Instance.new("UICorner"); clc.CornerRadius = UDim.new(0, 5); clc.Parent = CL
+
+local CT = Instance.new("Frame")
+CT.Size = UDim2.new(1, 0, 1, -38); CT.Position = UDim2.new(0, 0, 0, 38)
+CT.BackgroundTransparency = 1; CT.Parent = CF
+
+local HF = Instance.new("Frame")
+HF.Size = UDim2.new(1, -20, 0, 16); HF.Position = UDim2.new(0, 10, 0, 0)
+HF.BackgroundTransparency = 1; HF.Parent = CT
+local H1 = Instance.new("TextLabel")
+H1.Size = UDim2.new(0.42, 0, 1, 0); H1.Position = UDim2.new(0, 4, 0, 0)
+H1.BackgroundTransparency = 1; H1.Text = "COMANDO"
+H1.TextColor3 = Color3.fromRGB(150, 150, 180); H1.TextSize = 10
+H1.Font = Enum.Font.GothamBold; H1.TextXAlignment = Enum.TextXAlignment.Left; H1.Parent = HF
+local H2 = Instance.new("TextLabel")
+H2.Size = UDim2.new(0.56, 0, 1, 0); H2.Position = UDim2.new(0.43, 0, 0, 0)
+H2.BackgroundTransparency = 1; H2.Text = "CLIQUE PRA EXECUTAR"
+H2.TextColor3 = Color3.fromRGB(150, 150, 180); H2.TextSize = 10
+H2.Font = Enum.Font.GothamBold; H2.TextXAlignment = Enum.TextXAlignment.Left; H2.Parent = HF
+
+local SCR = Instance.new("ScrollingFrame")
+SCR.Size = UDim2.new(1, -20, 1, -26); SCR.Position = UDim2.new(0, 10, 0, 20)
+SCR.BackgroundTransparency = 1; SCR.BorderSizePixel = 0
+SCR.ScrollBarThickness = 4; SCR.ScrollBarImageColor3 = Color3.fromRGB(180, 0, 255)
+SCR.CanvasSize = UDim2.new(0, 0, 0, 0); SCR.ScrollingDirection = Enum.ScrollingDirection.Y
+SCR.ElasticBehavior = Enum.ElasticBehavior.Never; SCR.Parent = CT
+
+local y = 0
+for _, item in ipairs(lista) do
+    local row = Instance.new("TextButton")
+    row.Size = UDim2.new(1, -5, 0, 28); row.Position = UDim2.new(0, 0, 0, y)
+    row.BackgroundColor3 = Color3.fromRGB(0, 0, 0); row.BackgroundTransparency = 0.6
+    row.BorderSizePixel = 0; row.Text = ""; row.AutoButtonColor = false
+    row.Active = true; row.Parent = SCR
+    local rc = Instance.new("UICorner"); rc.CornerRadius = UDim.new(0, 5); rc.Parent = row
+    local cmdL = Instance.new("TextLabel")
+    cmdL.Size = UDim2.new(0.42, 0, 1, 0); cmdL.Position = UDim2.new(0, 6, 0, 0)
+    cmdL.BackgroundTransparency = 1; cmdL.Text = item[1]
+    cmdL.TextColor3 = Color3.fromRGB(0, 230, 255); cmdL.TextSize = 11
+    cmdL.Font = Enum.Font.Code; cmdL.TextXAlignment = Enum.TextXAlignment.Left; cmdL.Parent = row
+    local ar = Instance.new("TextLabel")
+    ar.Size = UDim2.new(0, 12, 1, 0); ar.Position = UDim2.new(0.42, 0, 0, 0)
+    ar.BackgroundTransparency = 1; ar.Text = "»"; ar.TextColor3 = Color3.fromRGB(180, 0, 255)
+    ar.TextSize = 12; ar.Font = Enum.Font.GothamBold; ar.Parent = row
+    local dL = Instance.new("TextLabel")
+    dL.Size = UDim2.new(0.56, -10, 1, 0); dL.Position = UDim2.new(0.44, 0, 0, 0)
+    dL.BackgroundTransparency = 1; dL.Text = item[2]
+    dL.TextColor3 = Color3.fromRGB(220, 220, 240); dL.TextSize = 11
+    dL.Font = Enum.Font.Gotham; dL.TextXAlignment = Enum.TextXAlignment.Left; dL.Parent = row
+    W.addTap(row, function()
+        if W.processCommand then W.processCommand(item[1]) end
+        local oc = row.BackgroundColor3
+        row.BackgroundColor3 = Color3.fromRGB(0, 255, 100)
+        TS:Create(row, TweenInfo.new(0.3), {BackgroundColor3 = oc}):Play()
+    end)
+    y = y + 32
+end
+SCR.CanvasSize = UDim2.new(0, 0, 0, y + 5)
+
+local visible, min = true, false
+local FULL = UDim2.new(0, 360, 0, 420)
+local MIN = UDim2.new(0, 360, 0, 42)
+
+local function toggle()
+    visible = not visible
+    if visible then
+        SG.Enabled = true; min = false
+        MN.Text = "■"; CT.Visible = true
+        CF.Size = UDim2.new(0, 0, 0, 0); CF.Position = UDim2.new(0.5, 0, 0.5, 0)
+        CF.BackgroundTransparency = 1; c2.Transparency = 1
+        TS:Create(CF, TweenInfo.new(0.3, Enum.EasingStyle.Back, Enum.EasingDirection.Out), {
+            Size = FULL, Position = UDim2.new(0.5, -180, 0.5, -210), BackgroundTransparency = 0.15,
+        }):Play()
+        TS:Create(c2, TweenInfo.new(0.35), {Transparency = 0.2}):Play()
+    else
+        local tw = TS:Create(CF, TweenInfo.new(0.2, Enum.EasingStyle.Back, Enum.EasingDirection.In), {
+            Size = UDim2.new(0, 0, 0, 0), Position = UDim2.new(0.5, 0, 0.5, 0), BackgroundTransparency = 1,
+        })
+        tw:Play(); TS:Create(c2, TweenInfo.new(0.2), {Transparency = 1}):Play()
+        tw.Completed:Wait(); SG.Enabled = false
+    end
+end
+
+W.toggles.cmds = toggle
+W.addTap(MN, function()
+    min = not min
+    if min then
+        CT.Visible = false; MN.Text = "▢"
+        TS:Create(CF, TweenInfo.new(0.3, Enum.EasingStyle.Quad, Enum.EasingDirection.Out), {Size = MIN}):Play()
+    else
+        CT.Visible = true; MN.Text = "■"
+        TS:Create(CF, TweenInfo.new(0.3, Enum.EasingStyle.Quad, Enum.EasingDirection.Out), {Size = FULL}):Play()
+    end
+end)
+W.addTap(CL, function()
+    if visible then toggle() end
+end)
+
+SG.Enabled = true
+CT.Visible = true
+CF.Size = UDim2.new(0, 0, 0, 0); CF.Position = UDim2.new(0.5, 0, 0.5, 0)
+CF.BackgroundTransparency = 1; c2.Transparency = 1
+TS:Create(CF, TweenInfo.new(0.3, Enum.EasingStyle.Back, Enum.EasingDirection.Out), {
+    Size = FULL, Position = UDim2.new(0.5, -180, 0.5, -210), BackgroundTransparency = 0.15,
+}):Play()
+TS:Create(c2, TweenInfo.new(0.35), {Transparency = 0.2}):Play()
+
+print("[cmds] Carregado")
