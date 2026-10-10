@@ -1,0 +1,215 @@
+local W = _G.Willnzx
+if not W then warn("[cmdbar2] Rode o gui_base primeiro"); return end
+
+local CoreGui = W.CoreGui
+local TS = W.TS
+local LP = W.LP
+local CAS = game:GetService("ContextActionService")
+
+pcall(function() CoreGui:FindFirstChild("WillnzxCmdBarGUI"):Destroy() end)
+
+local SG = Instance.new("ScreenGui")
+SG.Name = "WillnzxCmdBarGUI"
+SG.ResetOnSpawn = false
+SG.IgnoreGuiInset = true
+SG.ZIndexBehavior = Enum.ZIndexBehavior.Sibling
+SG.Enabled = true
+pcall(function() SG.Parent = CoreGui end)
+if not SG.Parent then SG.Parent = LP:WaitForChild("PlayerGui") end
+
+local CBF = Instance.new("Frame")
+CBF.Size = UDim2.new(0, 300, 0, 76)
+CBF.Position = UDim2.new(0.5, -150, 0.82, 0)
+CBF.BackgroundColor3 = Color3.fromRGB(15, 15, 25)
+CBF.BackgroundTransparency = 0.15
+CBF.BorderSizePixel = 0
+CBF.Active = true
+CBF.ClipsDescendants = true
+CBF.Parent = SG
+local cbc = Instance.new("UICorner"); cbc.CornerRadius = UDim.new(0, 12); cbc.Parent = CBF
+local cbs = Instance.new("UIStroke")
+cbs.Thickness = 1.5; cbs.Color = Color3.fromRGB(0, 200, 255); cbs.Transparency = 0.2
+cbs.ApplyStrokeMode = Enum.ApplyStrokeMode.Border; cbs.Parent = CBF
+local cbsg = Instance.new("UIGradient")
+cbsg.Color = ColorSequence.new({
+    ColorSequenceKeypoint.new(0, Color3.fromRGB(0, 200, 255)),
+    ColorSequenceKeypoint.new(0.5, Color3.fromRGB(180, 0, 255)),
+    ColorSequenceKeypoint.new(1, Color3.fromRGB(0, 200, 255)),
+})
+cbsg.Parent = cbs
+local cbbg = Instance.new("UIGradient")
+cbbg.Color = ColorSequence.new({
+    ColorSequenceKeypoint.new(0, Color3.fromRGB(20, 20, 35)),
+    ColorSequenceKeypoint.new(1, Color3.fromRGB(10, 5, 20)),
+})
+cbbg.Rotation = 45; cbbg.Parent = CBF
+
+local HD = Instance.new("Frame")
+HD.Size = UDim2.new(1, 0, 0, 32)
+HD.BackgroundColor3 = Color3.fromRGB(20, 20, 35); HD.BackgroundTransparency = 0.2
+HD.BorderSizePixel = 0; HD.Active = true; HD.Parent = CBF
+local hdc = Instance.new("UICorner"); hdc.CornerRadius = UDim.new(0, 12); hdc.Parent = HD
+
+local CBT = Instance.new("TextLabel")
+CBT.Size = UDim2.new(1, -75, 1, 0); CBT.Position = UDim2.new(0, 10, 0, 0)
+CBT.BackgroundTransparency = 1; CBT.Text = "CMDBAR2"
+CBT.TextColor3 = Color3.fromRGB(0, 230, 255); CBT.TextSize = 14
+CBT.Font = Enum.Font.GothamBold; CBT.TextXAlignment = Enum.TextXAlignment.Left
+CBT.Active = false; CBT.Parent = HD
+local cbtg = Instance.new("UIGradient")
+cbtg.Color = ColorSequence.new({
+    ColorSequenceKeypoint.new(0, Color3.fromRGB(0, 230, 255)),
+    ColorSequenceKeypoint.new(1, Color3.fromRGB(180, 0, 255)),
+})
+cbtg.Parent = CBT
+
+local MB2 = Instance.new("TextButton")
+MB2.Size = UDim2.new(0, 24, 0, 24); MB2.Position = UDim2.new(1, -56, 0, 4)
+MB2.BackgroundColor3 = Color3.fromRGB(0, 0, 0); MB2.BackgroundTransparency = 0.5
+MB2.Text = "−"; MB2.TextSize = 16; MB2.TextColor3 = Color3.fromRGB(0, 230, 255)
+MB2.Font = Enum.Font.GothamBold; MB2.AutoButtonColor = false; MB2.Parent = HD
+local mc2 = Instance.new("UICorner"); mc2.CornerRadius = UDim.new(0, 5); mc2.Parent = MB2
+
+local CB2 = Instance.new("TextButton")
+CB2.Size = UDim2.new(0, 24, 0, 24); CB2.Position = UDim2.new(1, -28, 0, 4)
+CB2.BackgroundColor3 = Color3.fromRGB(0, 0, 0); CB2.BackgroundTransparency = 0.5
+CB2.Text = "✕"; CB2.TextSize = 14; CB2.TextColor3 = Color3.fromRGB(255, 60, 60)
+CB2.Font = Enum.Font.GothamBold; CB2.AutoButtonColor = false; CB2.Parent = HD
+local cc2 = Instance.new("UICorner"); cc2.CornerRadius = UDim.new(0, 5); cc2.Parent = CB2
+
+local BD = Instance.new("Frame")
+BD.Size = UDim2.new(1, 0, 0, 44); BD.Position = UDim2.new(0, 0, 0, 32)
+BD.BackgroundColor3 = Color3.fromRGB(10, 10, 18); BD.BackgroundTransparency = 0.3
+BD.BorderSizePixel = 0; BD.Parent = CBF
+local bdc = Instance.new("UICorner"); bdc.CornerRadius = UDim.new(0, 12); bdc.Parent = BD
+
+local CBI = Instance.new("TextBox")
+CBI.Size = UDim2.new(1, -110, 0, 32); CBI.Position = UDim2.new(0, 8, 0.5, -16)
+CBI.BackgroundColor3 = Color3.fromRGB(0, 0, 0); CBI.BackgroundTransparency = 0.4
+CBI.BorderSizePixel = 0; CBI.Text = ""
+CBI.PlaceholderText = "Digite o comando..."
+CBI.PlaceholderColor3 = Color3.fromRGB(120, 120, 140)
+CBI.TextColor3 = Color3.fromRGB(0, 230, 255); CBI.TextSize = 13
+CBI.Font = Enum.Font.Gotham; CBI.TextXAlignment = Enum.TextXAlignment.Left
+CBI.ClearTextOnFocus = false; CBI.Parent = BD
+local cbi1 = Instance.new("UICorner"); cbi1.CornerRadius = UDim.new(0, 6); cbi1.Parent = CBI
+local cbi2 = Instance.new("UIStroke"); cbi2.Thickness = 1; cbi2.Color = Color3.fromRGB(0, 230, 255); cbi2.Transparency = 0.5; cbi2.Parent = CBI
+local cbp = Instance.new("UIPadding"); cbp.PaddingLeft = UDim.new(0, 8); cbp.Parent = CBI
+
+local EB = Instance.new("TextButton")
+EB.Size = UDim2.new(0, 92, 0, 32); EB.Position = UDim2.new(1, -100, 0.5, -16)
+EB.BackgroundColor3 = Color3.fromRGB(0, 0, 0); EB.BackgroundTransparency = 0.4
+EB.Text = "EXECUTE"; EB.TextSize = 12; EB.TextColor3 = Color3.fromRGB(255, 255, 255)
+EB.TextStrokeTransparency = 0.4; EB.TextStrokeColor3 = Color3.fromRGB(0, 0, 0)
+EB.Font = Enum.Font.GothamBold; EB.AutoButtonColor = false; EB.Parent = BD
+local ebc = Instance.new("UICorner"); ebc.CornerRadius = UDim.new(0, 6); ebc.Parent = EB
+local ebs = Instance.new("UIStroke"); ebs.Thickness = 1.5; ebs.Color = Color3.fromRGB(0, 200, 255); ebs.Transparency = 0.3; ebs.Parent = EB
+local ebg = Instance.new("UIGradient")
+ebg.Color = ColorSequence.new({
+    ColorSequenceKeypoint.new(0, Color3.fromRGB(0, 120, 180)),
+    ColorSequenceKeypoint.new(1, Color3.fromRGB(120, 0, 180)),
+})
+ebg.Rotation = 90
+ebg.Transparency = NumberSequence.new({NumberSequenceKeypoint.new(0, 0.7), NumberSequenceKeypoint.new(1, 0.7)})
+ebg.Parent = EB
+
+local vis, min = true, false
+local FULL = UDim2.new(0, 300, 0, 76)
+local MIN = UDim2.new(0, 300, 0, 32)
+
+local function toggle()
+    vis = not vis
+    SG.Enabled = vis
+    if vis then
+        min = false
+        BD.Visible = true
+        CBF.Size = FULL
+        MB2.Text = "−"
+        CBI.Text = ""
+        task.wait(0.1)
+        CBI:CaptureFocus()
+    end
+end
+
+W.toggles.cmdbar2 = toggle
+
+local function run()
+    local t = CBI.Text
+    if t and t:gsub("%s+", "") ~= "" then
+        local full = ";" .. t
+        if W.processCommand then W.processCommand(full) end
+        CBI.Text = ""
+    end
+end
+
+EB.MouseButton1Down:Connect(function()
+    run()
+    task.wait(0.05)
+    if vis and not min then CBI:CaptureFocus() end
+end)
+
+CAS:BindAction("BlockEnterCmdBar2", function(name, state, input)
+    if state == Enum.UserInputState.Begin then
+        if vis and CBI:IsFocused() then
+            run()
+            task.wait(0.05)
+            if vis and not min then CBI:CaptureFocus() end
+            return Enum.ContextActionResult.Sink
+        end
+    end
+    return Enum.ContextActionResult.Pass
+end, false, Enum.KeyCode.Return, Enum.KeyCode.KeypadEnter)
+
+CBI.FocusLost:Connect(function(ep)
+    if ep then run() end
+end)
+
+MB2.MouseButton1Down:Connect(function()
+    min = not min
+    if min then
+        BD.Visible = false
+        CBF.Size = MIN
+        MB2.Text = "+"
+    else
+        BD.Visible = true
+        CBF.Size = FULL
+        MB2.Text = "−"
+        task.wait(0.05)
+        CBI:CaptureFocus()
+    end
+end)
+
+CB2.MouseButton1Down:Connect(function()
+    if vis then vis = false; SG.Enabled = false end
+end)
+
+do
+    local da, ds, di = false, nil, nil
+    MB2.InputBegan:Connect(function(i)
+        if i.UserInputType == Enum.UserInputType.MouseButton1 or i.UserInputType == Enum.UserInputType.Touch then da = false end
+    end)
+    CB2.InputBegan:Connect(function(i)
+        if i.UserInputType == Enum.UserInputType.MouseButton1 or i.UserInputType == Enum.UserInputType.Touch then da = false end
+    end)
+    HD.InputBegan:Connect(function(i)
+        if i.UserInputType == Enum.UserInputType.MouseButton1 or i.UserInputType == Enum.UserInputType.Touch then
+            da = true
+            ds = CBF.Position
+            di = i.Position
+            i.Changed:Connect(function()
+                if i.UserInputState == Enum.UserInputState.Change and da then
+                    local d = i.Position - di
+                    CBF.Position = UDim2.new(ds.X.Scale, ds.X.Offset + d.X, ds.Y.Scale, ds.Y.Offset + d.Y)
+                end
+            end)
+        end
+    end)
+    HD.InputEnded:Connect(function(i)
+        if i.UserInputType == Enum.UserInputType.MouseButton1 or i.UserInputType == Enum.UserInputType.Touch then da = false end
+    end)
+end
+
+task.wait(0.1)
+CBI:CaptureFocus()
+
+print("[cmdbar2] Carregado")
