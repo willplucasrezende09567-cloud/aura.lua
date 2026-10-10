@@ -1,0 +1,224 @@
+local W = _G.Willnzx
+if not W then warn("[control] Rode o gui_base primeiro"); return end
+
+local CoreGui = W.CoreGui
+local TS = W.TS
+local LP = W.LP
+
+local CFG = {force = 5000, lift = 50, cooldown = 0.15, holdRepeat = 0.12}
+local lastFire = 0
+local controlScreenGui = nil
+
+local DIRS = {
+    up = function(c) return c.CFrame.LookVector end,
+    down = function(c) return -c.CFrame.LookVector end,
+    left = function(c) return -c.CFrame.RightVector end,
+    right = function(c) return c.CFrame.RightVector end,
+    upleft = function(c) return (c.CFrame.LookVector - c.CFrame.RightVector).Unit end,
+    upright = function(c) return (c.CFrame.LookVector + c.CFrame.RightVector).Unit end,
+    downleft = function(c) return (-c.CFrame.LookVector - c.CFrame.RightVector).Unit end,
+    downright = function(c) return (-c.CFrame.LookVector + c.CFrame.RightVector).Unit end,
+}
+
+local function kick(name)
+    local b = W.getBall()
+    local cam = workspace.CurrentCamera
+    if not b or not cam then return end
+    local fn = DIRS[name]
+    if not fn then return end
+    local dir = fn(cam)
+    dir = Vector3.new(dir.X, 0, dir.Z)
+    if dir.Magnitude < 0.01 then return end
+    dir = dir.Unit
+    local f = (dir * CFG.force) + Vector3.new(0, CFG.lift, 0)
+    if f.Magnitude > 8000 then f = f.Unit * 8000 end
+    local now = tick()
+    if now - lastFire < CFG.cooldown then return end
+    lastFire = now
+    W.safeFire(W.TKN, W.UID, "", b.Position, f, Vector3.new(0,0,0))
+end
+
+local function build()
+    pcall(function()
+        local old = CoreGui:FindFirstChild("ArrowControlGUI")
+        if old then old:Destroy() end
+    end)
+    local SG = Instance.new("ScreenGui")
+    SG.Name = "ArrowControlGUI"
+    SG.ResetOnSpawn = false
+    SG.IgnoreGuiInset = true
+    SG.ZIndexBehavior = Enum.ZIndexBehavior.Sibling
+    pcall(function() SG.Parent = CoreGui end)
+    if not SG.Parent then SG.Parent = LP:WaitForChild("PlayerGui") end
+
+    local F = Instance.new("Frame")
+    F.Size = UDim2.new(0, 200, 0, 240)
+    F.Position = UDim2.new(0.5, -100, 0, 100)
+    F.BackgroundColor3 = Color3.fromRGB(15, 15, 25)
+    F.BackgroundTransparency = 0.15
+    F.BorderSizePixel = 0
+    F.Active = true
+    F.Draggable = true
+    F.ClipsDescendants = true
+    F.Parent = SG
+    local fc = Instance.new("UICorner"); fc.CornerRadius = UDim.new(0, 12); fc.Parent = F
+    local fs = Instance.new("UIStroke"); fs.Thickness = 1.5; fs.Color = Color3.fromRGB(0, 220, 255); fs.Transparency = 0.2; fs.Parent = F
+
+    local T = Instance.new("TextLabel")
+    T.Size = UDim2.new(1, -40, 0, 20); T.Position = UDim2.new(0, 10, 0, 6)
+    T.BackgroundTransparency = 1
+    T.Text = "🎮 CONTROL"
+    T.TextColor3 = Color3.fromRGB(0, 220, 255); T.TextSize = 12
+    T.Font = Enum.Font.GothamBold; T.TextXAlignment = Enum.TextXAlignment.Left
+    T.Parent = F
+
+    local CL = Instance.new("TextButton")
+    CL.Size = UDim2.new(0, 22, 0, 22); CL.Position = UDim2.new(1, -28, 0, 4)
+    CL.BackgroundColor3 = Color3.fromRGB(0, 0, 0); CL.BackgroundTransparency = 0.5
+    CL.Text = "✕"; CL.TextSize = 12; CL.TextColor3 = Color3.fromRGB(255, 60, 60)
+    CL.Font = Enum.Font.GothamBold; CL.AutoButtonColor = false; CL.Parent = F
+    local cc = Instance.new("UICorner"); cc.CornerRadius = UDim.new(0, 5); cc.Parent = CL
+
+    local Grid = Instance.new("Frame")
+    Grid.Size = UDim2.new(1, -20, 0, 140); Grid.Position = UDim2.new(0, 10, 0, 32)
+    Grid.BackgroundTransparency = 1; Grid.Parent = F
+
+    local CN, CH, CA = Color3.fromRGB(0, 120, 180), Color3.fromRGB(0, 180, 240), Color3.fromRGB(0, 255, 100)
+
+    local function mk(col, row, sim, dname)
+        local b = Instance.new("TextButton")
+        b.Size = UDim2.new(0.31, 0, 0.31, 0)
+        b.Position = UDim2.new(col * 0.345, 0, row * 0.345, 0)
+        b.BackgroundColor3 = CN
+        b.BackgroundTransparency = 0.15
+        b.Text = sim
+        b.TextSize = 28
+        b.TextColor3 = Color3.fromRGB(255, 255, 255)
+        b.Font = Enum.Font.GothamBold
+        b.AutoButtonColor = false
+        b.Parent = Grid
+        local bc = Instance.new("UICorner"); bc.CornerRadius = UDim.new(0, 8); bc.Parent = b
+        local bs = Instance.new("UIStroke"); bs.Thickness = 1.5; bs.Color = Color3.fromRGB(0, 220, 255); bs.Transparency = 0.3; bs.Parent = b
+        local holding, ht = false, nil
+        local function doKick()
+            kick(dname)
+            b.BackgroundColor3 = CA
+            task.delay(0.1, function()
+                if not holding then TS:Create(b, TweenInfo.new(0.15), {BackgroundColor3 = CN}):Play() end
+            end)
+        end
+        b.InputBegan:Connect(function(i)
+            if i.UserInputType == Enum.UserInputType.MouseButton1 or i.UserInputType == Enum.UserInputType.Touch then
+                holding = true
+                b.BackgroundColor3 = CH
+                doKick()
+                if ht then task.cancel(ht) end
+                ht = task.spawn(function()
+                    while holding do task.wait(CFG.holdRepeat); if holding then doKick() end end
+                end)
+            end
+        end)
+        b.InputEnded:Connect(function(i)
+            if i.UserInputType == Enum.UserInputType.MouseButton1 or i.UserInputType == Enum.UserInputType.Touch then
+                holding = false
+                if ht then task.cancel(ht); ht = nil end
+                TS:Create(b, TweenInfo.new(0.15), {BackgroundColor3 = CN}):Play()
+            end
+        end)
+    end
+
+    mk(0, 0, "↖", "upleft")
+    mk(1, 0, "↑", "up")
+    mk(2, 0, "↗", "upright")
+    mk(0, 1, "←", "left")
+    mk(2, 1, "→", "right")
+    mk(0, 2, "↙", "downleft")
+    mk(1, 2, "↓", "down")
+    mk(2, 2, "↘", "downright")
+
+    local SF = Instance.new("Frame")
+    SF.Size = UDim2.new(1, -20, 0, 30); SF.Position = UDim2.new(0, 10, 0, 178)
+    SF.BackgroundColor3 = Color3.fromRGB(0, 0, 0); SF.BackgroundTransparency = 0.5
+    SF.BorderSizePixel = 0; SF.Parent = F
+    local sc = Instance.new("UICorner"); sc.CornerRadius = UDim.new(0, 6); sc.Parent = SF
+
+    local SL = Instance.new("TextLabel")
+    SL.Size = UDim2.new(1, -10, 0, 12); SL.Position = UDim2.new(0, 5, 0, 2)
+    SL.BackgroundTransparency = 1
+    SL.Text = "FORÇA: " .. CFG.force
+    SL.TextColor3 = Color3.fromRGB(0, 220, 255); SL.TextSize = 10
+    SL.Font = Enum.Font.GothamBold; SL.TextXAlignment = Enum.TextXAlignment.Left
+    SL.Parent = SF
+
+    local FT = Instance.new("Frame")
+    FT.Size = UDim2.new(1, -20, 0, 4); FT.Position = UDim2.new(0, 10, 0, 20)
+    FT.BackgroundColor3 = Color3.fromRGB(50, 50, 70); FT.BorderSizePixel = 0; FT.Parent = SF
+    local ftc = Instance.new("UICorner"); ftc.CornerRadius = UDim.new(0, 2); ftc.Parent = FT
+
+    local FK = Instance.new("TextButton")
+    FK.Size = UDim2.new(0, 16, 0, 16)
+    FK.Position = UDim2.new((CFG.force - 1000)/7000, -8, 0.5, -8)
+    FK.BackgroundColor3 = Color3.fromRGB(0, 220, 255); FK.Text = ""
+    FK.AutoButtonColor = false; FK.BorderSizePixel = 0; FK.ZIndex = 6; FK.Parent = FT
+    local fkc = Instance.new("UICorner"); fkc.CornerRadius = UDim.new(1, 0); fkc.Parent = FK
+
+    local drag = false
+    FK.InputBegan:Connect(function(i)
+        if i.UserInputType == Enum.UserInputType.MouseButton1 or i.UserInputType == Enum.UserInputType.Touch then drag = true end
+    end)
+    W.UIS.InputChanged:Connect(function(i)
+        if drag and (i.UserInputType == Enum.UserInputType.MouseMovement or i.UserInputType == Enum.UserInputType.Touch) then
+            local w = FT.AbsoluteSize.X
+            local rel = math.clamp((i.Position.X - FT.AbsolutePosition.X) / w, 0, 1)
+            local v = math.clamp(math.floor((1000 + rel * 7000) / 100) * 100, 1000, 8000)
+            FK.Position = UDim2.new((v - 1000)/7000, -8, 0.5, -8)
+            SL.Text = "FORÇA: " .. v
+            CFG.force = v
+        end
+    end)
+    W.UIS.InputEnded:Connect(function(i)
+        if i.UserInputType == Enum.UserInputType.MouseButton1 or i.UserInputType == Enum.UserInputType.Touch then drag = false end
+    end)
+
+    CL.MouseButton1Down:Connect(function()
+        if controlScreenGui then controlScreenGui:Destroy(); controlScreenGui = nil end
+        W.states.isControl = false
+    end)
+
+    do
+        local d, di, ds, sp
+        F.InputBegan:Connect(function(i)
+            if i.UserInputType == Enum.UserInputType.MouseButton1 or i.UserInputType == Enum.UserInputType.Touch then
+                if i.Target and (i.Target:IsA("TextButton") or i.Target:IsA("TextBox")) then return end
+                d = true; ds = i.Position; sp = F.Position
+                i.Changed:Connect(function() if i.UserInputState == Enum.UserInputState.End then d = false end end)
+            end
+        end)
+        F.InputChanged:Connect(function(i)
+            if i.UserInputType == Enum.UserInputType.MouseMovement or i.UserInputType == Enum.UserInputType.Touch then di = i end
+        end)
+        W.UIS.InputChanged:Connect(function(i)
+            if i == di and d then
+                local dt = i.Position - ds
+                F.Position = UDim2.new(sp.X.Scale, sp.X.Offset + dt.X, sp.Y.Scale, sp.Y.Offset + dt.Y)
+            end
+        end)
+    end
+    return SG
+end
+
+W.toggles.control = function()
+    if controlScreenGui then
+        controlScreenGui:Destroy()
+        controlScreenGui = nil
+        W.states.isControl = false
+    else
+        controlScreenGui = build()
+        W.states.isControl = true
+    end
+end
+
+controlScreenGui = build()
+W.states.isControl = true
+
+print("[control] Carregado")
