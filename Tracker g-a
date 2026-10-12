@@ -15,10 +15,17 @@ local MEU_DISPLAY = LocalPlayer.DisplayName
 local MEU_NOME_LOWER    = string.lower(MEU_NOME)
 local MEU_DISPLAY_LOWER = string.lower(MEU_DISPLAY)
 
-pcall(function() CoreGui:FindFirstChild("WillnzxGUI"):Destroy() end)
+-- ✅ Nome próprio do Tracker (não conflita com a GUI principal)
+local TRACKER_GUI_NAME = "TrackerGAGUI"
+
+-- ✅ Só destrói a versão ANTIGA do Tracker, nunca a GUI principal
+pcall(function()
+    local old = CoreGui:FindFirstChild(TRACKER_GUI_NAME)
+    if old then old:Destroy() end
+end)
 
 local ScreenGui = Instance.new("ScreenGui")
-ScreenGui.Name           = "WillnzxGUI"
+ScreenGui.Name           = TRACKER_GUI_NAME  -- ✅ nome alterado
 ScreenGui.ResetOnSpawn   = false
 ScreenGui.IgnoreGuiInset = true
 ScreenGui.ZIndexBehavior = Enum.ZIndexBehavior.Sibling
@@ -159,7 +166,7 @@ CloseStroke.Parent       = CloseBtn
 local LiderCard = Instance.new("Frame")
 LiderCard.Size                   = UDim2.new(0, 145, 0, 50)
 LiderCard.Position               = UDim2.new(0, 10, 0, 48)
-LiderCard.BackgroundColor3       = Color3.fromRGB(255, 215, 0) -- Dourado
+LiderCard.BackgroundColor3       = Color3.fromRGB(255, 215, 0)
 LiderCard.BackgroundTransparency = 0.85
 LiderCard.BorderSizePixel        = 0
 LiderCard.Parent                 = MainFrame
@@ -174,7 +181,6 @@ LiderCardStroke.Color        = Color3.fromRGB(255, 215, 0)
 LiderCardStroke.Transparency = 0.4
 LiderCardStroke.Parent       = LiderCard
 
--- Rótulo "LÍDER"
 local LiderLabel = Instance.new("TextLabel")
 LiderLabel.Size                   = UDim2.new(1, 0, 0, 14)
 LiderLabel.Position               = UDim2.new(0, 0, 0, 4)
@@ -185,7 +191,6 @@ LiderLabel.TextSize               = 11
 LiderLabel.Font                   = Enum.Font.GothamBold
 LiderLabel.Parent                 = LiderCard
 
--- Nome do líder
 local LiderNome = Instance.new("TextLabel")
 LiderNome.Size                   = UDim2.new(1, -10, 0, 14)
 LiderNome.Position               = UDim2.new(0, 5, 0, 18)
@@ -197,7 +202,6 @@ LiderNome.Font                   = Enum.Font.GothamBold
 LiderNome.TextTruncate           = Enum.TextTruncate.AtEnd
 LiderNome.Parent                 = LiderCard
 
--- Pontos do líder
 local LiderPontos = Instance.new("TextLabel")
 LiderPontos.Size                   = UDim2.new(1, -10, 0, 14)
 LiderPontos.Position               = UDim2.new(0, 5, 0, 32)
@@ -214,7 +218,7 @@ LiderPontos.Parent                 = LiderCard
 local VoceCard = Instance.new("Frame")
 VoceCard.Size                   = UDim2.new(0, 145, 0, 50)
 VoceCard.Position               = UDim2.new(1, -155, 0, 48)
-VoceCard.BackgroundColor3       = Color3.fromRGB(0, 200, 255) -- Azul ciano
+VoceCard.BackgroundColor3       = Color3.fromRGB(0, 200, 255)
 VoceCard.BackgroundTransparency = 0.85
 VoceCard.BorderSizePixel        = 0
 VoceCard.Parent                 = MainFrame
@@ -229,7 +233,6 @@ VoceCardStroke.Color        = Color3.fromRGB(0, 200, 255)
 VoceCardStroke.Transparency = 0.4
 VoceCardStroke.Parent       = VoceCard
 
--- Rótulo "VOCÊ"
 local VoceLabel = Instance.new("TextLabel")
 VoceLabel.Size                   = UDim2.new(1, 0, 0, 14)
 VoceLabel.Position               = UDim2.new(0, 0, 0, 4)
@@ -240,7 +243,6 @@ VoceLabel.TextSize               = 11
 VoceLabel.Font                   = Enum.Font.GothamBold
 VoceLabel.Parent                 = VoceCard
 
--- Seu nome
 local VoceNome = Instance.new("TextLabel")
 VoceNome.Size                   = UDim2.new(1, -10, 0, 14)
 VoceNome.Position               = UDim2.new(0, 5, 0, 18)
@@ -252,7 +254,6 @@ VoceNome.Font                   = Enum.Font.GothamBold
 VoceNome.TextTruncate           = Enum.TextTruncate.AtEnd
 VoceNome.Parent                 = VoceCard
 
--- Seus pontos
 local VocePontos = Instance.new("TextLabel")
 VocePontos.Size                   = UDim2.new(1, -10, 0, 14)
 VocePontos.Position               = UDim2.new(0, 5, 0, 32)
@@ -293,14 +294,14 @@ StatusLabel.Parent                 = StatusBar
 local function ehMeuNome(nomeNoPlacar)
     if not nomeNoPlacar or nomeNoPlacar == "" then return false end
     local nomeLower = string.lower(nomeNoPlacar)
-    
+
     if nomeLower == MEU_NOME_LOWER then return true end
     if nomeLower == MEU_DISPLAY_LOWER then return true end
     if #MEU_NOME_LOWER >= 4 and string.find(nomeLower, MEU_NOME_LOWER, 1, true) then return true end
     if #MEU_DISPLAY_LOWER >= 4 and string.find(nomeLower, MEU_DISPLAY_LOWER, 1, true) then return true end
     if #nomeLower >= 4 and string.find(MEU_NOME_LOWER, nomeLower, 1, true) then return true end
     if #nomeLower >= 4 and string.find(MEU_DISPLAY_LOWER, nomeLower, 1, true) then return true end
-    
+
     return false
 end
 
@@ -336,7 +337,7 @@ local function obterTextLabels(nomeDaPasta)
             table.insert(textLabels, obj)
         end
     end
-    
+
     cachePlacas[nomeDaPasta] = textLabels
     return textLabels
 end
@@ -345,10 +346,10 @@ local function extrairDadosDoPlacar(nomeDaPasta)
     local listaJogadores = {}
     local textLabels = obterTextLabels(nomeDaPasta)
     if #textLabels == 0 then return listaJogadores end
-    
+
     local sortedLabels = {}
     for i, v in ipairs(textLabels) do sortedLabels[i] = v end
-    
+
     table.sort(sortedLabels, function(a, b)
         local ay, by = a.AbsolutePosition.Y, b.AbsolutePosition.Y
         if math.abs(ay - by) < 15 then
@@ -356,7 +357,7 @@ local function extrairDadosDoPlacar(nomeDaPasta)
         end
         return ay < by
     end)
-    
+
     local linhas = {}
     for _, lbl in ipairs(sortedLabels) do
         local found = false
@@ -371,17 +372,17 @@ local function extrairDadosDoPlacar(nomeDaPasta)
             table.insert(linhas, {Y = lbl.AbsolutePosition.Y, Textos = {lbl.Text}})
         end
     end
-    
+
     for i, linha in ipairs(linhas) do
         local fullText = table.concat(linha.Textos, " ")
         local rank, name, score
-        
+
         local r, n = string.match(fullText, "(%d+)%s+([%w_]+)")
         if r and n then rank = tonumber(r) name = n end
-        
+
         local s = string.match(fullText, "(%d+)$")
         if s and name then score = tonumber(s) end
-        
+
         if name then
             table.insert(listaJogadores, {rank = rank or (i), name = name, score = score or 0})
         end
@@ -391,17 +392,17 @@ end
 
 local function obterTotalGA()
     local totalPorJogador = {}
-    
+
     local topScorers = extrairDadosDoPlacar("TopScorers")
     for _, data in ipairs(topScorers) do
         totalPorJogador[data.name] = (totalPorJogador[data.name] or 0) + data.score
     end
-    
+
     local topAssists = extrairDadosDoPlacar("TopAssists")
     for _, data in ipairs(topAssists) do
         totalPorJogador[data.name] = (totalPorJogador[data.name] or 0) + data.score
     end
-    
+
     return totalPorJogador
 end
 
@@ -411,10 +412,9 @@ end
 task.spawn(function()
     while ScreenGui.Parent do
         task.wait(0.3)
-        
+
         local totais = obterTotalGA()
-        
-        -- 1. Líder
+
         local liderNome = "---"
         local liderTotal = 0
         for nome, total in pairs(totais) do
@@ -423,8 +423,7 @@ task.spawn(function()
                 liderNome = nome
             end
         end
-        
-        -- 2. Meu total
+
         local meuTotal = 0
         for nome, total in pairs(totais) do
             if ehMeuNome(nome) then
@@ -432,15 +431,13 @@ task.spawn(function()
                 break
             end
         end
-        
-        -- 3. Atualiza cards
+
         LiderNome.Text   = liderNome
         LiderPontos.Text = liderTotal .. " G/A"
         VocePontos.Text  = meuTotal .. " G/A"
-        
-        -- 4. Atualiza barra de status
+
         local euSouLider = ehMeuNome(liderNome)
-        
+
         if liderNome == "---" then
             StatusLabel.Text = "⏳ Aguardando dados..."
             StatusLabel.TextColor3 = Color3.fromRGB(150, 150, 150)
