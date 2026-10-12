@@ -9,33 +9,30 @@ local CFG = {force = 5000, lift = 50, cooldown = 0.15, holdRepeat = 0.12}
 local lastFire = 0
 local controlScreenGui = nil
 
+local REF = Vector3.new(-214.58, 6.32, 92.62)
+
 local DIRS = {
-    up = function(c) return c.CFrame.LookVector end,
-    down = function(c) return -c.CFrame.LookVector end,
-    left = function(c) return -c.CFrame.RightVector end,
-    right = function(c) return c.CFrame.RightVector end,
-    upleft = function(c) return (c.CFrame.LookVector - c.CFrame.RightVector).Unit end,
-    upright = function(c) return (c.CFrame.LookVector + c.CFrame.RightVector).Unit end,
-    downleft = function(c) return (-c.CFrame.LookVector - c.CFrame.RightVector).Unit end,
-    downright = function(c) return (-c.CFrame.LookVector + c.CFrame.RightVector).Unit end,
+    up        = Vector3.new( 1, 0,  0),
+    down      = Vector3.new(-1, 0,  0),
+    left      = Vector3.new( 0, 0, -1),
+    right     = Vector3.new( 0, 0,  1),
+    upleft    = Vector3.new( 1, 0, -1).Unit,
+    upright   = Vector3.new( 1, 0,  1).Unit,
+    downleft  = Vector3.new(-1, 0, -1).Unit,
+    downright = Vector3.new(-1, 0,  1).Unit,
 }
 
 local function kick(name)
     local b = W.getBall()
-    local cam = workspace.CurrentCamera
-    if not b or not cam then return end
-    local fn = DIRS[name]
-    if not fn then return end
-    local dir = fn(cam)
-    dir = Vector3.new(dir.X, 0, dir.Z)
-    if dir.Magnitude < 0.01 then return end
-    dir = dir.Unit
+    if not b then return end
+    local dir = DIRS[name]
+    if not dir then return end
     local f = (dir * CFG.force) + Vector3.new(0, CFG.lift, 0)
     if f.Magnitude > 8000 then f = f.Unit * 8000 end
     local now = tick()
     if now - lastFire < CFG.cooldown then return end
     lastFire = now
-    W.safeFire(W.TKN, W.UID, "", b.Position, f, Vector3.new(0,0,0))
+    W.safeFire(W.TKN, W.UID, "", b.Position, f, Vector3.new(0, 0, 0))
 end
 
 local function build()
@@ -67,7 +64,7 @@ local function build()
     local T = Instance.new("TextLabel")
     T.Size = UDim2.new(1, -40, 0, 20); T.Position = UDim2.new(0, 10, 0, 6)
     T.BackgroundTransparency = 1
-    T.Text = "🎮 CONTROL"
+    T.Text = "CONTROL"
     T.TextColor3 = Color3.fromRGB(0, 220, 255); T.TextSize = 12
     T.Font = Enum.Font.GothamBold; T.TextXAlignment = Enum.TextXAlignment.Left
     T.Parent = F
@@ -75,7 +72,7 @@ local function build()
     local CL = Instance.new("TextButton")
     CL.Size = UDim2.new(0, 22, 0, 22); CL.Position = UDim2.new(1, -28, 0, 4)
     CL.BackgroundColor3 = Color3.fromRGB(0, 0, 0); CL.BackgroundTransparency = 0.5
-    CL.Text = "✕"; CL.TextSize = 12; CL.TextColor3 = Color3.fromRGB(255, 60, 60)
+    CL.Text = "X"; CL.TextSize = 12; CL.TextColor3 = Color3.fromRGB(255, 60, 60)
     CL.Font = Enum.Font.GothamBold; CL.AutoButtonColor = false; CL.Parent = F
     local cc = Instance.new("UICorner"); cc.CornerRadius = UDim.new(0, 5); cc.Parent = CL
 
@@ -127,14 +124,14 @@ local function build()
         end)
     end
 
-    mk(0, 0, "↖", "upleft")
-    mk(1, 0, "↑", "up")
-    mk(2, 0, "↗", "upright")
-    mk(0, 1, "←", "left")
-    mk(2, 1, "→", "right")
-    mk(0, 2, "↙", "downleft")
-    mk(1, 2, "↓", "down")
-    mk(2, 2, "↘", "downright")
+    mk(0, 0, "UL", "upleft")
+    mk(1, 0, "U", "up")
+    mk(2, 0, "UR", "upright")
+    mk(0, 1, "L", "left")
+    mk(2, 1, "R", "right")
+    mk(0, 2, "DL", "downleft")
+    mk(1, 2, "D", "down")
+    mk(2, 2, "DR", "downright")
 
     local SF = Instance.new("Frame")
     SF.Size = UDim2.new(1, -20, 0, 30); SF.Position = UDim2.new(0, 10, 0, 178)
@@ -145,7 +142,7 @@ local function build()
     local SL = Instance.new("TextLabel")
     SL.Size = UDim2.new(1, -10, 0, 12); SL.Position = UDim2.new(0, 5, 0, 2)
     SL.BackgroundTransparency = 1
-    SL.Text = "FORÇA: " .. CFG.force
+    SL.Text = "FORCA: " .. CFG.force
     SL.TextColor3 = Color3.fromRGB(0, 220, 255); SL.TextSize = 10
     SL.Font = Enum.Font.GothamBold; SL.TextXAlignment = Enum.TextXAlignment.Left
     SL.Parent = SF
@@ -172,7 +169,7 @@ local function build()
             local rel = math.clamp((i.Position.X - FT.AbsolutePosition.X) / w, 0, 1)
             local v = math.clamp(math.floor((1000 + rel * 7000) / 100) * 100, 1000, 8000)
             FK.Position = UDim2.new((v - 1000)/7000, -8, 0.5, -8)
-            SL.Text = "FORÇA: " .. v
+            SL.Text = "FORCA: " .. v
             CFG.force = v
         end
     end)
