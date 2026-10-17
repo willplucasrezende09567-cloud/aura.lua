@@ -1,5 +1,6 @@
 -- ================================================================
---   G/A Tracker + Bola de Ouro (Layout Melhorado + Fix Minimizar)
+--   G/A Tracker — Frosted Glass Edition
+--   by: @willnzx.mt
 -- ================================================================
 
 local CoreGui          = game:GetService("CoreGui")
@@ -15,10 +16,29 @@ local MEU_DISPLAY = LocalPlayer.DisplayName
 local MEU_NOME_LOWER    = string.lower(MEU_NOME)
 local MEU_DISPLAY_LOWER = string.lower(MEU_DISPLAY)
 
-pcall(function() CoreGui:FindFirstChild("WillnzxGUI"):Destroy() end)
+-- ⬅️ FIX: usa GATrackerGUI em vez de WillnzxGUI pra não matar a principal
+pcall(function() CoreGui:FindFirstChild("GATrackerGUI"):Destroy() end)
 
+-- ================================================================
+--  PALETA — Frosted Glass
+-- ================================================================
+local Colors = {
+    bg          = Color3.fromRGB(245, 248, 255),
+    btnIdle     = Color3.fromRGB(255, 255, 255),
+    btnPress    = Color3.fromRGB(140, 180, 255),
+    textDark    = Color3.fromRGB(30, 40, 60),
+    textLight   = Color3.fromRGB(255, 255, 255),
+    accent      = Color3.fromRGB(100, 150, 255),
+    gold        = Color3.fromRGB(255, 200, 60),
+    red         = Color3.fromRGB(255, 100, 120),
+    green       = Color3.fromRGB(80, 200, 140),
+}
+
+-- ================================================================
+--  SCREEN GUI
+-- ================================================================
 local ScreenGui = Instance.new("ScreenGui")
-ScreenGui.Name           = "WillnzxGUI"
+ScreenGui.Name           = "GATrackerGUI"
 ScreenGui.ResetOnSpawn   = false
 ScreenGui.IgnoreGuiInset = true
 ScreenGui.ZIndexBehavior = Enum.ZIndexBehavior.Sibling
@@ -33,45 +53,34 @@ else
 end
 
 -- ================================================================
---  FRAME PRINCIPAL
+--  FRAME PRINCIPAL — Vidro Fosco
 -- ================================================================
 local MainFrame = Instance.new("Frame")
 MainFrame.Size                   = UDim2.new(0, 320, 0, 130)
 MainFrame.Position               = UDim2.new(0.5, -160, 0.5, -65)
-MainFrame.BackgroundColor3       = Color3.fromRGB(15, 15, 25)
+MainFrame.BackgroundColor3       = Colors.bg
 MainFrame.BackgroundTransparency = 0.15
 MainFrame.BorderSizePixel        = 0
 MainFrame.Active                 = true
-MainFrame.Draggable              = true
 MainFrame.ClipsDescendants       = true
 MainFrame.Parent                 = ScreenGui
 
-local MainCorner = Instance.new("UICorner")
-MainCorner.CornerRadius = UDim.new(0, 12)
-MainCorner.Parent       = MainFrame
+Instance.new("UICorner", MainFrame).CornerRadius = UDim.new(0, 16)
+
+local BgGrad = Instance.new("UIGradient")
+BgGrad.Color = ColorSequence.new({
+    ColorSequenceKeypoint.new(0, Color3.fromRGB(255, 255, 255)),
+    ColorSequenceKeypoint.new(1, Color3.fromRGB(230, 240, 255))
+})
+BgGrad.Rotation = 45
+BgGrad.Parent = MainFrame
 
 local Stroke = Instance.new("UIStroke")
 Stroke.Thickness       = 1.5
-Stroke.Color           = Color3.fromRGB(0, 200, 255)
+Stroke.Color           = Color3.fromRGB(255, 255, 255)
 Stroke.Transparency    = 0.2
 Stroke.ApplyStrokeMode = Enum.ApplyStrokeMode.Border
 Stroke.Parent          = MainFrame
-
-local StrokeGradient = Instance.new("UIGradient")
-StrokeGradient.Color = ColorSequence.new({
-    ColorSequenceKeypoint.new(0.0, Color3.fromRGB(0, 200, 255)),
-    ColorSequenceKeypoint.new(0.5, Color3.fromRGB(180, 0, 255)),
-    ColorSequenceKeypoint.new(1.0, Color3.fromRGB(0, 200, 255)),
-})
-StrokeGradient.Parent = Stroke
-
-local BgGradient = Instance.new("UIGradient")
-BgGradient.Color = ColorSequence.new({
-    ColorSequenceKeypoint.new(0, Color3.fromRGB(20, 20, 35)),
-    ColorSequenceKeypoint.new(1, Color3.fromRGB(10, 5, 20)),
-})
-BgGradient.Rotation = 45
-BgGradient.Parent   = MainFrame
 
 -- ================================================================
 --  CABEÇALHO
@@ -81,105 +90,97 @@ Title.Size                   = UDim2.new(1, -80, 0, 24)
 Title.Position               = UDim2.new(0, 40, 0, 10)
 Title.BackgroundTransparency = 1
 Title.Text                   = "⚽ G/A Tracker"
-Title.TextColor3             = Color3.fromRGB(220, 240, 255)
+Title.TextColor3             = Colors.textDark
 Title.TextSize               = 16
 Title.Font                   = Enum.Font.GothamBold
 Title.TextXAlignment         = Enum.TextXAlignment.Center
 Title.ZIndex                 = 3
 Title.Parent                 = MainFrame
 
-local TitleGradient = Instance.new("UIGradient")
-TitleGradient.Color = ColorSequence.new({
-    ColorSequenceKeypoint.new(0, Color3.fromRGB(200, 235, 255)),
-    ColorSequenceKeypoint.new(1, Color3.fromRGB(230, 200, 255)),
+local TitleGrad = Instance.new("UIGradient")
+TitleGrad.Color = ColorSequence.new({
+    ColorSequenceKeypoint.new(0, Color3.fromRGB(80, 130, 230)),
+    ColorSequenceKeypoint.new(1, Color3.fromRGB(180, 100, 230)),
 })
-TitleGradient.Parent = Title
+TitleGrad.Parent = Title
 
--- Linha divisória
 local Divider = Instance.new("Frame")
 Divider.Size                   = UDim2.new(1, -20, 0, 1)
 Divider.Position               = UDim2.new(0, 10, 0, 40)
-Divider.BackgroundColor3       = Color3.fromRGB(60, 80, 120)
-Divider.BackgroundTransparency = 0.5
+Divider.BackgroundColor3       = Colors.accent
+Divider.BackgroundTransparency = 0.6
 Divider.BorderSizePixel        = 0
 Divider.Parent                 = MainFrame
 
 -- ================================================================
---  BOTÕES MINIMIZAR E FECHAR
+--  BOTÕES MINIMIZAR / FECHAR — Frosted
 -- ================================================================
-local MinBtn = Instance.new("TextButton")
-MinBtn.Size                   = UDim2.new(0, 26, 0, 26)
-MinBtn.Position               = UDim2.new(1, -62, 0, 8)
-MinBtn.BackgroundColor3       = Color3.fromRGB(0, 0, 0)
-MinBtn.BackgroundTransparency = 0.5
-MinBtn.Text                   = "■"
-MinBtn.TextSize               = 15
-MinBtn.TextColor3             = Color3.fromRGB(150, 240, 255)
-MinBtn.Font                   = Enum.Font.GothamBold
-MinBtn.AutoButtonColor        = false
-MinBtn.ZIndex                 = 3
-MinBtn.Parent                 = MainFrame
+local function makeCtrlBtn(text, color, xOffset)
+    local btn = Instance.new("TextButton")
+    btn.Size                   = UDim2.new(0, 26, 0, 26)
+    btn.Position               = UDim2.new(1, xOffset, 0, 8)
+    btn.BackgroundColor3       = Colors.btnIdle
+    btn.BackgroundTransparency = 0.3
+    btn.Text                   = text
+    btn.TextSize               = 15
+    btn.TextColor3             = color
+    btn.Font                   = Enum.Font.GothamBold
+    btn.AutoButtonColor        = false
+    btn.ZIndex                 = 3
+    btn.Parent                 = MainFrame
 
-local MinCorner = Instance.new("UICorner")
-MinCorner.CornerRadius = UDim.new(0, 6)
-MinCorner.Parent       = MinBtn
+    Instance.new("UICorner", btn).CornerRadius = UDim.new(0, 8)
+    local s = Instance.new("UIStroke", btn)
+    s.Thickness = 1.2
+    s.Color = color
+    s.Transparency = 0.35
 
-local MinStroke = Instance.new("UIStroke")
-MinStroke.Thickness    = 1.2
-MinStroke.Color        = Color3.fromRGB(0, 230, 255)
-MinStroke.Transparency = 0.35
-MinStroke.Parent       = MinBtn
+    btn.MouseEnter:Connect(function()
+        TweenService:Create(btn, TweenInfo.new(0.2), {BackgroundTransparency = 0}):Play()
+        TweenService:Create(s, TweenInfo.new(0.2), {Transparency = 0.1}):Play()
+    end)
+    btn.MouseLeave:Connect(function()
+        TweenService:Create(btn, TweenInfo.new(0.2), {BackgroundTransparency = 0.3}):Play()
+        TweenService:Create(s, TweenInfo.new(0.2), {Transparency = 0.35}):Play()
+    end)
+    return btn
+end
 
-local CloseBtn = Instance.new("TextButton")
-CloseBtn.Size                   = UDim2.new(0, 26, 0, 26)
-CloseBtn.Position               = UDim2.new(1, -32, 0, 8)
-CloseBtn.BackgroundColor3       = Color3.fromRGB(0, 0, 0)
-CloseBtn.BackgroundTransparency = 0.5
-CloseBtn.Text                   = "✕"
-CloseBtn.TextSize               = 15
-CloseBtn.TextColor3             = Color3.fromRGB(255, 150, 170)
-CloseBtn.Font                   = Enum.Font.GothamBold
-CloseBtn.AutoButtonColor        = false
-CloseBtn.ZIndex                 = 3
-CloseBtn.Parent                 = MainFrame
-
-local CloseCorner = Instance.new("UICorner")
-CloseCorner.CornerRadius = UDim.new(0, 6)
-CloseCorner.Parent       = CloseBtn
-
-local CloseStroke = Instance.new("UIStroke")
-CloseStroke.Thickness    = 1.2
-CloseStroke.Color        = Color3.fromRGB(255, 80, 110)
-CloseStroke.Transparency = 0.35
-CloseStroke.Parent       = CloseBtn
+local MinBtn = makeCtrlBtn("−", Colors.textDark, -62)
+local CloseBtn = makeCtrlBtn("×", Colors.red, -32)
 
 -- ================================================================
---  📊 CARD DO LÍDER
+--  🥇 CARD DO LÍDER
 -- ================================================================
 local LiderCard = Instance.new("Frame")
 LiderCard.Size                   = UDim2.new(0, 145, 0, 50)
 LiderCard.Position               = UDim2.new(0, 10, 0, 48)
-LiderCard.BackgroundColor3       = Color3.fromRGB(255, 215, 0)
-LiderCard.BackgroundTransparency = 0.85
+LiderCard.BackgroundColor3       = Colors.btnIdle
+LiderCard.BackgroundTransparency = 0
 LiderCard.BorderSizePixel        = 0
 LiderCard.Parent                 = MainFrame
 
-local LiderCardCorner = Instance.new("UICorner")
-LiderCardCorner.CornerRadius = UDim.new(0, 8)
-LiderCardCorner.Parent       = LiderCard
+Instance.new("UICorner", LiderCard).CornerRadius = UDim.new(0, 10)
 
-local LiderCardStroke = Instance.new("UIStroke")
-LiderCardStroke.Thickness    = 1
-LiderCardStroke.Color        = Color3.fromRGB(255, 215, 0)
-LiderCardStroke.Transparency = 0.4
-LiderCardStroke.Parent       = LiderCard
+local LiderStroke = Instance.new("UIStroke")
+LiderStroke.Thickness = 1.5
+LiderStroke.Color = Colors.gold
+LiderStroke.Transparency = 0.3
+LiderStroke.Parent = LiderCard
+
+local LiderGrad = Instance.new("UIGradient", LiderCard)
+LiderGrad.Color = ColorSequence.new({
+    ColorSequenceKeypoint.new(0, Color3.fromRGB(255, 245, 210)),
+    ColorSequenceKeypoint.new(1, Color3.fromRGB(255, 225, 150)),
+})
+LiderGrad.Rotation = 45
 
 local LiderLabel = Instance.new("TextLabel")
 LiderLabel.Size                   = UDim2.new(1, 0, 0, 14)
 LiderLabel.Position               = UDim2.new(0, 0, 0, 4)
 LiderLabel.BackgroundTransparency = 1
 LiderLabel.Text                   = "🥇 LÍDER"
-LiderLabel.TextColor3             = Color3.fromRGB(255, 215, 0)
+LiderLabel.TextColor3             = Color3.fromRGB(180, 120, 0)
 LiderLabel.TextSize               = 11
 LiderLabel.Font                   = Enum.Font.GothamBold
 LiderLabel.Parent                 = LiderCard
@@ -189,7 +190,7 @@ LiderNome.Size                   = UDim2.new(1, -10, 0, 14)
 LiderNome.Position               = UDim2.new(0, 5, 0, 18)
 LiderNome.BackgroundTransparency = 1
 LiderNome.Text                   = "..."
-LiderNome.TextColor3             = Color3.fromRGB(255, 255, 255)
+LiderNome.TextColor3             = Colors.textDark
 LiderNome.TextSize               = 12
 LiderNome.Font                   = Enum.Font.GothamBold
 LiderNome.TextTruncate           = Enum.TextTruncate.AtEnd
@@ -200,9 +201,9 @@ LiderPontos.Size                   = UDim2.new(1, -10, 0, 14)
 LiderPontos.Position               = UDim2.new(0, 5, 0, 32)
 LiderPontos.BackgroundTransparency = 1
 LiderPontos.Text                   = "0 G/A"
-LiderPontos.TextColor3             = Color3.fromRGB(255, 215, 0)
+LiderPontos.TextColor3             = Color3.fromRGB(180, 120, 0)
 LiderPontos.TextSize               = 11
-LiderPontos.Font                   = Enum.Font.Gotham
+LiderPontos.Font                   = Enum.Font.GothamBold
 LiderPontos.Parent                 = LiderCard
 
 -- ================================================================
@@ -211,27 +212,32 @@ LiderPontos.Parent                 = LiderCard
 local VoceCard = Instance.new("Frame")
 VoceCard.Size                   = UDim2.new(0, 145, 0, 50)
 VoceCard.Position               = UDim2.new(1, -155, 0, 48)
-VoceCard.BackgroundColor3       = Color3.fromRGB(0, 200, 255)
-VoceCard.BackgroundTransparency = 0.85
+VoceCard.BackgroundColor3       = Colors.btnIdle
+VoceCard.BackgroundTransparency = 0
 VoceCard.BorderSizePixel        = 0
 VoceCard.Parent                 = MainFrame
 
-local VoceCardCorner = Instance.new("UICorner")
-VoceCardCorner.CornerRadius = UDim.new(0, 8)
-VoceCardCorner.Parent       = VoceCard
+Instance.new("UICorner", VoceCard).CornerRadius = UDim.new(0, 10)
 
-local VoceCardStroke = Instance.new("UIStroke")
-VoceCardStroke.Thickness    = 1
-VoceCardStroke.Color        = Color3.fromRGB(0, 200, 255)
-VoceCardStroke.Transparency = 0.4
-VoceCardStroke.Parent       = VoceCard
+local VoceStroke = Instance.new("UIStroke")
+VoceStroke.Thickness = 1.5
+VoceStroke.Color = Colors.accent
+VoceStroke.Transparency = 0.3
+VoceStroke.Parent = VoceCard
+
+local VoceGrad = Instance.new("UIGradient", VoceCard)
+VoceGrad.Color = ColorSequence.new({
+    ColorSequenceKeypoint.new(0, Color3.fromRGB(230, 240, 255)),
+    ColorSequenceKeypoint.new(1, Color3.fromRGB(200, 220, 255)),
+})
+VoceGrad.Rotation = 45
 
 local VoceLabel = Instance.new("TextLabel")
 VoceLabel.Size                   = UDim2.new(1, 0, 0, 14)
 VoceLabel.Position               = UDim2.new(0, 0, 0, 4)
 VoceLabel.BackgroundTransparency = 1
 VoceLabel.Text                   = "👤 VOCÊ"
-VoceLabel.TextColor3             = Color3.fromRGB(0, 200, 255)
+VoceLabel.TextColor3             = Colors.accent
 VoceLabel.TextSize               = 11
 VoceLabel.Font                   = Enum.Font.GothamBold
 VoceLabel.Parent                 = VoceCard
@@ -241,7 +247,7 @@ VoceNome.Size                   = UDim2.new(1, -10, 0, 14)
 VoceNome.Position               = UDim2.new(0, 5, 0, 18)
 VoceNome.BackgroundTransparency = 1
 VoceNome.Text                   = MEU_NOME
-VoceNome.TextColor3             = Color3.fromRGB(255, 255, 255)
+VoceNome.TextColor3             = Colors.textDark
 VoceNome.TextSize               = 12
 VoceNome.Font                   = Enum.Font.GothamBold
 VoceNome.TextTruncate           = Enum.TextTruncate.AtEnd
@@ -252,32 +258,35 @@ VocePontos.Size                   = UDim2.new(1, -10, 0, 14)
 VocePontos.Position               = UDim2.new(0, 5, 0, 32)
 VocePontos.BackgroundTransparency = 1
 VocePontos.Text                   = "0 G/A"
-VocePontos.TextColor3             = Color3.fromRGB(0, 200, 255)
+VocePontos.TextColor3             = Colors.accent
 VocePontos.TextSize               = 11
-VocePontos.Font                   = Enum.Font.Gotham
+VocePontos.Font                   = Enum.Font.GothamBold
 VocePontos.Parent                 = VoceCard
 
 -- ================================================================
---  📈 BARRA DE STATUS
+--  📈 BARRA DE STATUS — Frosted
 -- ================================================================
 local StatusBar = Instance.new("Frame")
 StatusBar.Size                   = UDim2.new(1, -20, 0, 22)
 StatusBar.Position               = UDim2.new(0, 10, 1, -30)
-StatusBar.BackgroundColor3       = Color3.fromRGB(0, 0, 0)
-StatusBar.BackgroundTransparency = 0.5
+StatusBar.BackgroundColor3       = Colors.btnIdle
+StatusBar.BackgroundTransparency = 0.3
 StatusBar.BorderSizePixel        = 0
 StatusBar.Parent                 = MainFrame
 
-local StatusBarCorner = Instance.new("UICorner")
-StatusBarCorner.CornerRadius = UDim.new(0, 6)
-StatusBarCorner.Parent       = StatusBar
+Instance.new("UICorner", StatusBar).CornerRadius = UDim.new(0, 8)
+
+local StatusBarStroke = Instance.new("UIStroke", StatusBar)
+StatusBarStroke.Thickness = 1
+StatusBarStroke.Color = Colors.accent
+StatusBarStroke.Transparency = 0.5
 
 local StatusLabel = Instance.new("TextLabel")
 StatusLabel.Size                   = UDim2.new(1, 0, 1, 0)
 StatusLabel.BackgroundTransparency = 1
 StatusLabel.Text                   = "Calculando..."
-StatusLabel.TextColor3             = Color3.fromRGB(150, 200, 220)
-StatusLabel.TextSize               = 12
+StatusLabel.TextColor3             = Colors.accent
+StatusLabel.TextSize               = 11
 StatusLabel.Font                   = Enum.Font.GothamBold
 StatusLabel.Parent                 = StatusBar
 
@@ -287,14 +296,14 @@ StatusLabel.Parent                 = StatusBar
 local function ehMeuNome(nomeNoPlacar)
     if not nomeNoPlacar or nomeNoPlacar == "" then return false end
     local nomeLower = string.lower(nomeNoPlacar)
-    
+
     if nomeLower == MEU_NOME_LOWER then return true end
     if nomeLower == MEU_DISPLAY_LOWER then return true end
     if #MEU_NOME_LOWER >= 4 and string.find(nomeLower, MEU_NOME_LOWER, 1, true) then return true end
     if #MEU_DISPLAY_LOWER >= 4 and string.find(nomeLower, MEU_DISPLAY_LOWER, 1, true) then return true end
     if #nomeLower >= 4 and string.find(MEU_NOME_LOWER, nomeLower, 1, true) then return true end
     if #nomeLower >= 4 and string.find(MEU_DISPLAY_LOWER, nomeLower, 1, true) then return true end
-    
+
     return false
 end
 
@@ -330,7 +339,7 @@ local function obterTextLabels(nomeDaPasta)
             table.insert(textLabels, obj)
         end
     end
-    
+
     cachePlacas[nomeDaPasta] = textLabels
     return textLabels
 end
@@ -339,10 +348,10 @@ local function extrairDadosDoPlacar(nomeDaPasta)
     local listaJogadores = {}
     local textLabels = obterTextLabels(nomeDaPasta)
     if #textLabels == 0 then return listaJogadores end
-    
+
     local sortedLabels = {}
     for i, v in ipairs(textLabels) do sortedLabels[i] = v end
-    
+
     table.sort(sortedLabels, function(a, b)
         local ay, by = a.AbsolutePosition.Y, b.AbsolutePosition.Y
         if math.abs(ay - by) < 15 then
@@ -350,7 +359,7 @@ local function extrairDadosDoPlacar(nomeDaPasta)
         end
         return ay < by
     end)
-    
+
     local linhas = {}
     for _, lbl in ipairs(sortedLabels) do
         local found = false
@@ -365,17 +374,17 @@ local function extrairDadosDoPlacar(nomeDaPasta)
             table.insert(linhas, {Y = lbl.AbsolutePosition.Y, Textos = {lbl.Text}})
         end
     end
-    
+
     for i, linha in ipairs(linhas) do
         local fullText = table.concat(linha.Textos, " ")
         local rank, name, score
-        
+
         local r, n = string.match(fullText, "(%d+)%s+([%w_]+)")
         if r and n then rank = tonumber(r) name = n end
-        
+
         local s = string.match(fullText, "(%d+)$")
         if s and name then score = tonumber(s) end
-        
+
         if name then
             table.insert(listaJogadores, {rank = rank or (i), name = name, score = score or 0})
         end
@@ -385,17 +394,17 @@ end
 
 local function obterTotalGA()
     local totalPorJogador = {}
-    
+
     local topScorers = extrairDadosDoPlacar("TopScorers")
     for _, data in ipairs(topScorers) do
         totalPorJogador[data.name] = (totalPorJogador[data.name] or 0) + data.score
     end
-    
+
     local topAssists = extrairDadosDoPlacar("TopAssists")
     for _, data in ipairs(topAssists) do
         totalPorJogador[data.name] = (totalPorJogador[data.name] or 0) + data.score
     end
-    
+
     return totalPorJogador
 end
 
@@ -405,9 +414,9 @@ end
 task.spawn(function()
     while ScreenGui.Parent do
         task.wait(0.3)
-        
+
         local totais = obterTotalGA()
-        
+
         local liderNome = "---"
         local liderTotal = 0
         for nome, total in pairs(totais) do
@@ -416,7 +425,7 @@ task.spawn(function()
                 liderNome = nome
             end
         end
-        
+
         local meuTotal = 0
         for nome, total in pairs(totais) do
             if ehMeuNome(nome) then
@@ -424,29 +433,29 @@ task.spawn(function()
                 break
             end
         end
-        
+
         LiderNome.Text   = liderNome
         LiderPontos.Text = liderTotal .. " G/A"
         VocePontos.Text  = meuTotal .. " G/A"
-        
+
         local euSouLider = ehMeuNome(liderNome)
-        
+
         if liderNome == "---" then
             StatusLabel.Text = "⏳ Aguardando dados..."
             StatusLabel.TextColor3 = Color3.fromRGB(150, 150, 150)
         elseif euSouLider then
-            StatusLabel.Text = "🏆 Parabéns! Você está em 1º lugar!"
-            StatusLabel.TextColor3 = Color3.fromRGB(0, 255, 150)
+            StatusLabel.Text = "🏆 Você está em 1º lugar!"
+            StatusLabel.TextColor3 = Colors.green
         else
             local distancia = liderTotal - meuTotal
-            StatusLabel.Text = "📊 Faltam " .. distancia .. " G/A para alcançar o líder"
-            StatusLabel.TextColor3 = Color3.fromRGB(255, 255, 100)
+            StatusLabel.Text = "📊 Faltam " .. distancia .. " G/A para o líder"
+            StatusLabel.TextColor3 = Colors.gold
         end
     end
 end)
 
 -- ================================================================
---  🎯 MINIMIZAR (COM FIX - ESCONDE OS CARDS E A BARRA)
+--  🎯 MINIMIZAR COM ANIMAÇÃO FROSTED
 -- ================================================================
 local minimized = false
 local FULL_SIZE = UDim2.new(0, 320, 0, 130)
@@ -454,47 +463,65 @@ local MIN_SIZE  = UDim2.new(0, 320, 0, 46)
 
 MinBtn.MouseButton1Click:Connect(function()
     minimized = not minimized
-    
-    -- Esconde/Mostra os elementos
-    LiderCard.Visible = not minimized
-    VoceCard.Visible  = not minimized
-    StatusBar.Visible = not minimized
-    Divider.Visible   = not minimized
-    
-    -- Ajusta a posição do título quando minimizado
+
     if minimized then
+        -- fade out dos cards
+        TweenService:Create(LiderCard, TweenInfo.new(0.15), {BackgroundTransparency = 1}):Play()
+        TweenService:Create(VoceCard, TweenInfo.new(0.15), {BackgroundTransparency = 1}):Play()
+        TweenService:Create(StatusBar, TweenInfo.new(0.15), {BackgroundTransparency = 1}):Play()
+        TweenService:Create(Divider, TweenInfo.new(0.15), {BackgroundTransparency = 1}):Play()
+        TweenService:Create(LiderStroke, TweenInfo.new(0.15), {Transparency = 1}):Play()
+        TweenService:Create(VoceStroke, TweenInfo.new(0.15), {Transparency = 1}):Play()
+        TweenService:Create(StatusBarStroke, TweenInfo.new(0.15), {Transparency = 1}):Play()
+        LiderNome.TextTransparency = 1
+        LiderPontos.TextTransparency = 1
+        LiderLabel.TextTransparency = 1
+        VoceNome.TextTransparency = 1
+        VocePontos.TextTransparency = 1
+        VoceLabel.TextTransparency = 1
+        StatusLabel.TextTransparency = 1
+
+        task.wait(0.1)
+        TweenService:Create(MainFrame, TweenInfo.new(0.35, Enum.EasingStyle.Quad, Enum.EasingDirection.Out), {
+            Size = MIN_SIZE
+        }):Play()
         Title.Position = UDim2.new(0, 40, 0, 11)
         Title.Size     = UDim2.new(1, -80, 1, 0)
+        MinBtn.Text = "+"
     else
+        TweenService:Create(MainFrame, TweenInfo.new(0.35, Enum.EasingStyle.Quad, Enum.EasingDirection.Out), {
+            Size = FULL_SIZE
+        }):Play()
         Title.Position = UDim2.new(0, 40, 0, 10)
         Title.Size     = UDim2.new(1, -80, 0, 24)
+        MinBtn.Text = "−"
+
+        task.wait(0.2)
+        TweenService:Create(LiderCard, TweenInfo.new(0.25), {BackgroundTransparency = 0}):Play()
+        TweenService:Create(VoceCard, TweenInfo.new(0.25), {BackgroundTransparency = 0}):Play()
+        TweenService:Create(StatusBar, TweenInfo.new(0.25), {BackgroundTransparency = 0.3}):Play()
+        TweenService:Create(Divider, TweenInfo.new(0.25), {BackgroundTransparency = 0.6}):Play()
+        TweenService:Create(LiderStroke, TweenInfo.new(0.25), {Transparency = 0.3}):Play()
+        TweenService:Create(VoceStroke, TweenInfo.new(0.25), {Transparency = 0.3}):Play()
+        TweenService:Create(StatusBarStroke, TweenInfo.new(0.25), {Transparency = 0.5}):Play()
+        LiderNome.TextTransparency = 0
+        LiderPontos.TextTransparency = 0
+        LiderLabel.TextTransparency = 0
+        VoceNome.TextTransparency = 0
+        VocePontos.TextTransparency = 0
+        VoceLabel.TextTransparency = 0
+        StatusLabel.TextTransparency = 0
     end
-    
-    -- Anima o tamanho do frame
-    TweenService:Create(MainFrame, TweenInfo.new(0.35, Enum.EasingStyle.Quad, Enum.EasingDirection.Out), {
-        Size = minimized and MIN_SIZE or FULL_SIZE
-    }):Play()
-    
-    MinBtn.Text = minimized and "▢" or "■"
 end)
 
-local function bindHover(btn, stroke)
-    btn.MouseEnter:Connect(function()
-        TweenService:Create(btn, TweenInfo.new(0.15), {BackgroundTransparency = 0.2}):Play()
-        TweenService:Create(stroke, TweenInfo.new(0.15), {Transparency = 0.1}):Play()
-    end)
-    btn.MouseLeave:Connect(function()
-        TweenService:Create(btn, TweenInfo.new(0.15), {BackgroundTransparency = 0.5}):Play()
-        TweenService:Create(stroke, TweenInfo.new(0.15), {Transparency = 0.35}):Play()
-    end)
-end
-bindHover(MinBtn, MinStroke)
-bindHover(CloseBtn, CloseStroke)
-
+-- ================================================================
+--  FECHAR — animação
+-- ================================================================
 CloseBtn.MouseButton1Click:Connect(function()
     local t = TweenService:Create(MainFrame, TweenInfo.new(0.3, Enum.EasingStyle.Back, Enum.EasingDirection.In), {
         Size = UDim2.new(0, 0, 0, 0),
         Position = UDim2.new(0.5, 0, 0.5, 0),
+        Rotation = 15,
         BackgroundTransparency = 1
     })
     t:Play()
@@ -521,9 +548,11 @@ do
             dragging  = true
             dragStart = input.Position
             startPos  = MainFrame.Position
+            TweenService:Create(MainFrame, TweenInfo.new(0.2), {BackgroundTransparency = 0.05}):Play()
             input.Changed:Connect(function()
                 if input.UserInputState == Enum.UserInputState.End then
                     dragging = false
+                    TweenService:Create(MainFrame, TweenInfo.new(0.3), {BackgroundTransparency = 0.15}):Play()
                 end
             end)
         end
@@ -540,3 +569,20 @@ do
         end
     end)
 end
+
+-- ================================================================
+--  ANIMAÇÃO DE ABERTURA — Entrada elástica
+-- ================================================================
+task.spawn(function()
+    task.wait(0.1)
+    MainFrame.Size = UDim2.new(0, 0, 0, 0)
+    MainFrame.BackgroundTransparency = 1
+    Stroke.Transparency = 1
+    TweenService:Create(MainFrame, TweenInfo.new(0.6, Enum.EasingStyle.Back, Enum.EasingDirection.Out), {
+        Size = FULL_SIZE,
+        BackgroundTransparency = 0.15
+    }):Play()
+    TweenService:Create(Stroke, TweenInfo.new(0.5), {Transparency = 0.2}):Play()
+end)
+
+print("[willnzx.mt] G/A Tracker — Frosted Glass carregado")
