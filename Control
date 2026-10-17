@@ -1,9 +1,26 @@
+-- ================================================================
+--   Control — Frosted Glass Edition
+--   by: @willnzx.mt
+-- ================================================================
+
 local W = _G.Willnzx
 if not W then warn("[control] Rode o gui_base primeiro"); return end
 
 local CoreGui = W.CoreGui
 local TS = W.TS
 local LP = W.LP
+
+-- ⬅️ PALETA — Frosted Glass
+local C = {
+    bg        = Color3.fromRGB(245, 248, 255),
+    btnIdle   = Color3.fromRGB(255, 255, 255),
+    btnPress  = Color3.fromRGB(140, 180, 255),
+    textDark  = Color3.fromRGB(30, 40, 60),
+    textLight = Color3.fromRGB(255, 255, 255),
+    accent    = Color3.fromRGB(100, 150, 255),
+    green     = Color3.fromRGB(80, 200, 140),
+    red       = Color3.fromRGB(255, 100, 120),
+}
 
 local CFG = {force = 5000, lift = 50, cooldown = 0.15, holdRepeat = 0.12}
 local lastFire = 0
@@ -40,6 +57,7 @@ local function build()
         local old = CoreGui:FindFirstChild("ArrowControlGUI")
         if old then old:Destroy() end
     end)
+
     local SG = Instance.new("ScreenGui")
     SG.Name = "ArrowControlGUI"
     SG.ResetOnSpawn = false
@@ -48,151 +66,295 @@ local function build()
     pcall(function() SG.Parent = CoreGui end)
     if not SG.Parent then SG.Parent = LP:WaitForChild("PlayerGui") end
 
+    -- ⬅️ FRAME PRINCIPAL — Vidro Fosco
     local F = Instance.new("Frame")
     F.Size = UDim2.new(0, 200, 0, 240)
     F.Position = UDim2.new(0.5, -100, 0, 100)
-    F.BackgroundColor3 = Color3.fromRGB(15, 15, 25)
+    F.BackgroundColor3 = C.bg
     F.BackgroundTransparency = 0.15
     F.BorderSizePixel = 0
     F.Active = true
-    F.Draggable = true
     F.ClipsDescendants = true
     F.Parent = SG
-    local fc = Instance.new("UICorner"); fc.CornerRadius = UDim.new(0, 12); fc.Parent = F
-    local fs = Instance.new("UIStroke"); fs.Thickness = 1.5; fs.Color = Color3.fromRGB(0, 220, 255); fs.Transparency = 0.2; fs.Parent = F
+    Instance.new("UICorner", F).CornerRadius = UDim.new(0, 16)
 
+    local BgGrad = Instance.new("UIGradient", F)
+    BgGrad.Color = ColorSequence.new({
+        ColorSequenceKeypoint.new(0, Color3.fromRGB(255, 255, 255)),
+        ColorSequenceKeypoint.new(1, Color3.fromRGB(230, 240, 255))
+    })
+    BgGrad.Rotation = 45
+
+    local fs = Instance.new("UIStroke", F)
+    fs.Thickness = 1.5
+    fs.Color = Color3.fromRGB(255, 255, 255)
+    fs.Transparency = 0.2
+    fs.ApplyStrokeMode = Enum.ApplyStrokeMode.Border
+
+    -- Título
     local T = Instance.new("TextLabel")
-    T.Size = UDim2.new(1, -40, 0, 20); T.Position = UDim2.new(0, 10, 0, 6)
+    T.Size = UDim2.new(1, -40, 0, 20); T.Position = UDim2.new(0, 12, 0, 8)
     T.BackgroundTransparency = 1
-    T.Text = "CONTROL"
-    T.TextColor3 = Color3.fromRGB(0, 220, 255); T.TextSize = 12
+    T.Text = "🎮 CONTROL"
+    T.TextColor3 = C.textDark; T.TextSize = 13
     T.Font = Enum.Font.GothamBold; T.TextXAlignment = Enum.TextXAlignment.Left
     T.Parent = F
 
-    local CL = Instance.new("TextButton")
-    CL.Size = UDim2.new(0, 22, 0, 22); CL.Position = UDim2.new(1, -28, 0, 4)
-    CL.BackgroundColor3 = Color3.fromRGB(0, 0, 0); CL.BackgroundTransparency = 0.5
-    CL.Text = "X"; CL.TextSize = 12; CL.TextColor3 = Color3.fromRGB(255, 60, 60)
-    CL.Font = Enum.Font.GothamBold; CL.AutoButtonColor = false; CL.Parent = F
-    local cc = Instance.new("UICorner"); cc.CornerRadius = UDim.new(0, 5); cc.Parent = CL
+    local Tg = Instance.new("UIGradient", T)
+    Tg.Color = ColorSequence.new({
+        ColorSequenceKeypoint.new(0, Color3.fromRGB(80, 130, 230)),
+        ColorSequenceKeypoint.new(1, Color3.fromRGB(180, 100, 230)),
+    })
 
+    -- Botão Fechar
+    local CL = Instance.new("TextButton")
+    CL.Size = UDim2.new(0, 24, 0, 24); CL.Position = UDim2.new(1, -32, 0, 6)
+    CL.BackgroundColor3 = C.btnIdle; CL.BackgroundTransparency = 0.3
+    CL.Text = "×"; CL.TextSize = 16; CL.TextColor3 = C.red
+    CL.Font = Enum.Font.GothamBold; CL.AutoButtonColor = false; CL.Parent = F
+    Instance.new("UICorner", CL).CornerRadius = UDim.new(0, 8)
+    local cls = Instance.new("UIStroke", CL)
+    cls.Thickness = 1.2; cls.Color = C.red; cls.Transparency = 0.35
+    CL.MouseEnter:Connect(function()
+        TS:Create(CL, TweenInfo.new(0.2), {BackgroundTransparency = 0}):Play()
+        TS:Create(cls, TweenInfo.new(0.2), {Transparency = 0.1}):Play()
+    end)
+    CL.MouseLeave:Connect(function()
+        TS:Create(CL, TweenInfo.new(0.2), {BackgroundTransparency = 0.3}):Play()
+        TS:Create(cls, TweenInfo.new(0.2), {Transparency = 0.35}):Play()
+    end)
+
+    -- Grid de setas
     local Grid = Instance.new("Frame")
-    Grid.Size = UDim2.new(1, -20, 0, 140); Grid.Position = UDim2.new(0, 10, 0, 32)
+    Grid.Size = UDim2.new(1, -20, 0, 140); Grid.Position = UDim2.new(0, 10, 0, 38)
     Grid.BackgroundTransparency = 1; Grid.Parent = F
 
-    local CN, CH, CA = Color3.fromRGB(0, 120, 180), Color3.fromRGB(0, 180, 240), Color3.fromRGB(0, 255, 100)
-
+    -- ⬅️ Botões de seta com efeitos Frosted
     local function mk(col, row, sim, dname)
         local b = Instance.new("TextButton")
         b.Size = UDim2.new(0.31, 0, 0.31, 0)
         b.Position = UDim2.new(col * 0.345, 0, row * 0.345, 0)
-        b.BackgroundColor3 = CN
-        b.BackgroundTransparency = 0.15
+        b.BackgroundColor3 = C.btnIdle
+        b.BackgroundTransparency = 0
         b.Text = sim
-        b.TextSize = 28
-        b.TextColor3 = Color3.fromRGB(255, 255, 255)
+        b.TextSize = 26
+        b.TextColor3 = C.accent
         b.Font = Enum.Font.GothamBold
         b.AutoButtonColor = false
+        b.ClipsDescendants = true
         b.Parent = Grid
-        local bc = Instance.new("UICorner"); bc.CornerRadius = UDim.new(0, 8); bc.Parent = b
-        local bs = Instance.new("UIStroke"); bs.Thickness = 1.5; bs.Color = Color3.fromRGB(0, 220, 255); bs.Transparency = 0.3; bs.Parent = b
+
+        Instance.new("UICorner", b).CornerRadius = UDim.new(0, 10)
+        local bs = Instance.new("UIStroke", b)
+        bs.Thickness = 1.5; bs.Color = C.accent; bs.Transparency = 0.3
+
+        -- Shimmer
+        local Shimmer = Instance.new("Frame", b)
+        Shimmer.Size = UDim2.new(0, 20, 1, 0)
+        Shimmer.Position = UDim2.new(-0.5, 0, 0, 0)
+        Shimmer.BackgroundColor3 = Color3.fromRGB(255, 255, 255)
+        Shimmer.BackgroundTransparency = 0.5
+        Shimmer.BorderSizePixel = 0
+        Shimmer.Rotation = 15
+        Shimmer.ZIndex = 4
+        local ShGrad = Instance.new("UIGradient", Shimmer)
+        ShGrad.Transparency = NumberSequence.new({
+            NumberSequenceKeypoint.new(0, 1),
+            NumberSequenceKeypoint.new(0.5, 0.5),
+            NumberSequenceKeypoint.new(1, 1)
+        })
+
+        -- Hover
+        b.MouseEnter:Connect(function()
+            TS:Create(bs, TweenInfo.new(0.2), {Transparency = 0}):Play()
+            Shimmer.Position = UDim2.new(-0.5, 0, 0, 0)
+            TS:Create(Shimmer, TweenInfo.new(0.6, Enum.EasingStyle.Quad, Enum.EasingDirection.Out), {
+                Position = UDim2.new(1.5, 0, 0, 0)
+            }):Play()
+        end)
+        b.MouseLeave:Connect(function()
+            TS:Create(bs, TweenInfo.new(0.2), {Transparency = 0.3}):Play()
+        end)
+
         local holding, ht = false, nil
+
+        local function createRipple()
+            local Ripple = Instance.new("Frame", b)
+            Ripple.Size = UDim2.new(0, 0, 0, 0)
+            Ripple.Position = UDim2.new(0.5, 0, 0.5, 0)
+            Ripple.BackgroundColor3 = C.accent
+            Ripple.BackgroundTransparency = 0.5
+            Ripple.BorderSizePixel = 0
+            Ripple.ZIndex = 2
+            Instance.new("UICorner", Ripple).CornerRadius = UDim.new(1, 0)
+            TS:Create(Ripple, TweenInfo.new(0.6, Enum.EasingStyle.Quad, Enum.EasingDirection.Out), {
+                Size = UDim2.new(0, 250, 0, 250),
+                Position = UDim2.new(0.5, -125, 0.5, -125),
+                BackgroundTransparency = 1
+            }):Play()
+            task.delay(0.6, function() Ripple:Destroy() end)
+        end
+
         local function doKick()
             kick(dname)
-            b.BackgroundColor3 = CA
+            -- flash verde ao atirar
+            TS:Create(b, TweenInfo.new(0.1), {
+                BackgroundColor3 = C.green,
+                TextColor3 = C.textLight
+            }):Play()
             task.delay(0.1, function()
-                if not holding then TS:Create(b, TweenInfo.new(0.15), {BackgroundColor3 = CN}):Play() end
+                if not holding then
+                    TS:Create(b, TweenInfo.new(0.2), {
+                        BackgroundColor3 = C.btnIdle,
+                        TextColor3 = C.accent
+                    }):Play()
+                end
             end)
         end
+
         b.InputBegan:Connect(function(i)
             if i.UserInputType == Enum.UserInputType.MouseButton1 or i.UserInputType == Enum.UserInputType.Touch then
                 holding = true
-                b.BackgroundColor3 = CH
+                createRipple()
+                -- squish
+                TS:Create(b, TweenInfo.new(0.15, Enum.EasingStyle.Quad), {
+                    Size = UDim2.new(0.29, 0, 0.29, 0),
+                    Position = UDim2.new(col * 0.345 + 0.01, 0, row * 0.345 + 0.01, 0),
+                    BackgroundColor3 = C.btnPress,
+                    TextColor3 = C.textLight
+                }):Play()
+                TS:Create(bs, TweenInfo.new(0.1), {Transparency = 0}):Play()
+
                 doKick()
+
                 if ht then task.cancel(ht) end
                 ht = task.spawn(function()
-                    while holding do task.wait(CFG.holdRepeat); if holding then doKick() end end
+                    while holding do
+                        task.wait(CFG.holdRepeat)
+                        if holding then doKick() end
+                    end
                 end)
             end
         end)
+
         b.InputEnded:Connect(function(i)
             if i.UserInputType == Enum.UserInputType.MouseButton1 or i.UserInputType == Enum.UserInputType.Touch then
                 holding = false
                 if ht then task.cancel(ht); ht = nil end
-                TS:Create(b, TweenInfo.new(0.15), {BackgroundColor3 = CN}):Play()
+                -- volta elástico
+                TS:Create(b, TweenInfo.new(0.4, Enum.EasingStyle.Back, Enum.EasingDirection.Out), {
+                    Size = UDim2.new(0.31, 0, 0.31, 0),
+                    Position = UDim2.new(col * 0.345, 0, row * 0.345, 0),
+                    BackgroundColor3 = C.btnIdle,
+                    TextColor3 = C.accent
+                }):Play()
+                TS:Create(bs, TweenInfo.new(0.25), {Transparency = 0.3}):Play()
             end
         end)
     end
 
-    mk(0, 0, "\u{2196}", "upleft")
-    mk(1, 0, "\u{2191}", "up")
-    mk(2, 0, "\u{2197}", "upright")
-    mk(0, 1, "\u{2190}", "left")
-    mk(2, 1, "\u{2192}", "right")
-    mk(0, 2, "\u{2199}", "downleft")
-    mk(1, 2, "\u{2193}", "down")
-    mk(2, 2, "\u{2198}", "downright")
+    mk(0, 0, "↖", "upleft")
+    mk(1, 0, "↑", "up")
+    mk(2, 0, "↗", "upright")
+    mk(0, 1, "←", "left")
+    mk(2, 1, "→", "right")
+    mk(0, 2, "↙", "downleft")
+    mk(1, 2, "↓", "down")
+    mk(2, 2, "↘", "downright")
 
+    -- ⬅️ Slider de força — Frosted
     local SF = Instance.new("Frame")
-    SF.Size = UDim2.new(1, -20, 0, 30); SF.Position = UDim2.new(0, 10, 0, 178)
-    SF.BackgroundColor3 = Color3.fromRGB(0, 0, 0); SF.BackgroundTransparency = 0.5
-    SF.BorderSizePixel = 0; SF.Parent = F
-    local sc = Instance.new("UICorner"); sc.CornerRadius = UDim.new(0, 6); sc.Parent = SF
+    SF.Size = UDim2.new(1, -20, 0, 32); SF.Position = UDim2.new(0, 10, 0, 182)
+    SF.BackgroundColor3 = C.btnIdle
+    SF.BackgroundTransparency = 0.3
+    SF.BorderSizePixel = 0
+    SF.Parent = F
+    Instance.new("UICorner", SF).CornerRadius = UDim.new(0, 8)
+    local sfs = Instance.new("UIStroke", SF)
+    sfs.Thickness = 1; sfs.Color = C.accent; sfs.Transparency = 0.5
 
     local SL = Instance.new("TextLabel")
-    SL.Size = UDim2.new(1, -10, 0, 12); SL.Position = UDim2.new(0, 5, 0, 2)
+    SL.Size = UDim2.new(1, -10, 0, 12); SL.Position = UDim2.new(0, 8, 0, 3)
     SL.BackgroundTransparency = 1
-    SL.Text = "FORCA: " .. CFG.force
-    SL.TextColor3 = Color3.fromRGB(0, 220, 255); SL.TextSize = 10
+    SL.Text = "FORÇA: " .. CFG.force
+    SL.TextColor3 = C.accent; SL.TextSize = 10
     SL.Font = Enum.Font.GothamBold; SL.TextXAlignment = Enum.TextXAlignment.Left
     SL.Parent = SF
 
     local FT = Instance.new("Frame")
-    FT.Size = UDim2.new(1, -20, 0, 4); FT.Position = UDim2.new(0, 10, 0, 20)
-    FT.BackgroundColor3 = Color3.fromRGB(50, 50, 70); FT.BorderSizePixel = 0; FT.Parent = SF
-    local ftc = Instance.new("UICorner"); ftc.CornerRadius = UDim.new(0, 2); ftc.Parent = FT
+    FT.Size = UDim2.new(1, -20, 0, 4); FT.Position = UDim2.new(0, 10, 0, 22)
+    FT.BackgroundColor3 = Color3.fromRGB(220, 230, 250)
+    FT.BorderSizePixel = 0
+    FT.Parent = SF
+    Instance.new("UICorner", FT).CornerRadius = UDim.new(0, 2)
 
     local FK = Instance.new("TextButton")
     FK.Size = UDim2.new(0, 16, 0, 16)
     FK.Position = UDim2.new((CFG.force - 1000)/7000, -8, 0.5, -8)
-    FK.BackgroundColor3 = Color3.fromRGB(0, 220, 255); FK.Text = ""
-    FK.AutoButtonColor = false; FK.BorderSizePixel = 0; FK.ZIndex = 6; FK.Parent = FT
-    local fkc = Instance.new("UICorner"); fkc.CornerRadius = UDim.new(1, 0); fkc.Parent = FK
+    FK.BackgroundColor3 = C.accent
+    FK.Text = ""
+    FK.AutoButtonColor = false
+    FK.BorderSizePixel = 0
+    FK.ZIndex = 6
+    FK.Parent = FT
+    Instance.new("UICorner", FK).CornerRadius = UDim.new(1, 0)
+    local fks = Instance.new("UIStroke", FK)
+    fks.Thickness = 1.5; fks.Color = Color3.fromRGB(255, 255, 255)
 
     local drag = false
     FK.InputBegan:Connect(function(i)
-        if i.UserInputType == Enum.UserInputType.MouseButton1 or i.UserInputType == Enum.UserInputType.Touch then drag = true end
+        if i.UserInputType == Enum.UserInputType.MouseButton1 or i.UserInputType == Enum.UserInputType.Touch then
+            drag = true
+            TS:Create(FK, TweenInfo.new(0.15), {Size = UDim2.new(0, 20, 0, 20)}):Play()
+        end
     end)
     W.UIS.InputChanged:Connect(function(i)
         if drag and (i.UserInputType == Enum.UserInputType.MouseMovement or i.UserInputType == Enum.UserInputType.Touch) then
             local w = FT.AbsoluteSize.X
             local rel = math.clamp((i.Position.X - FT.AbsolutePosition.X) / w, 0, 1)
             local v = math.clamp(math.floor((1000 + rel * 7000) / 100) * 100, 1000, 8000)
-            FK.Position = UDim2.new((v - 1000)/7000, -8, 0.5, -8)
-            SL.Text = "FORCA: " .. v
+            FK.Position = UDim2.new((v - 1000)/7000, -10, 0.5, -10)
+            SL.Text = "FORÇA: " .. v
             CFG.force = v
         end
     end)
     W.UIS.InputEnded:Connect(function(i)
-        if i.UserInputType == Enum.UserInputType.MouseButton1 or i.UserInputType == Enum.UserInputType.Touch then drag = false end
+        if i.UserInputType == Enum.UserInputType.MouseButton1 or i.UserInputType == Enum.UserInputType.Touch then
+            if drag then
+                drag = false
+                TS:Create(FK, TweenInfo.new(0.25, Enum.EasingStyle.Back, Enum.EasingDirection.Out), {
+                    Size = UDim2.new(0, 16, 0, 16)
+                }):Play()
+            end
+        end
     end)
 
+    -- Fechar
     CL.MouseButton1Down:Connect(function()
         if controlScreenGui then controlScreenGui:Destroy(); controlScreenGui = nil end
         W.states.isControl = false
     end)
 
+    -- Drag da janela inteira
     do
         local d, di, ds, sp
         F.InputBegan:Connect(function(i)
             if i.UserInputType == Enum.UserInputType.MouseButton1 or i.UserInputType == Enum.UserInputType.Touch then
                 if i.Target and (i.Target:IsA("TextButton") or i.Target:IsA("TextBox")) then return end
                 d = true; ds = i.Position; sp = F.Position
-                i.Changed:Connect(function() if i.UserInputState == Enum.UserInputState.End then d = false end end)
+                TS:Create(F, TweenInfo.new(0.2), {BackgroundTransparency = 0.05}):Play()
+                i.Changed:Connect(function()
+                    if i.UserInputState == Enum.UserInputState.End then
+                        d = false
+                        TS:Create(F, TweenInfo.new(0.3), {BackgroundTransparency = 0.15}):Play()
+                    end
+                end)
             end
         end)
         F.InputChanged:Connect(function(i)
-            if i.UserInputType == Enum.UserInputType.MouseMovement or i.UserInputType == Enum.UserInputType.Touch then di = i end
+            if i.UserInputType == Enum.UserInputType.MouseMovement or i.UserInputType == Enum.UserInputType.Touch then
+                di = i
+            end
         end)
         W.UIS.InputChanged:Connect(function(i)
             if i == di and d then
@@ -201,6 +363,20 @@ local function build()
             end
         end)
     end
+
+    -- ⬅️ Animação de abertura
+    task.spawn(function()
+        task.wait(0.05)
+        F.Size = UDim2.new(0, 0, 0, 0)
+        F.BackgroundTransparency = 1
+        fs.Transparency = 1
+        TS:Create(F, TweenInfo.new(0.5, Enum.EasingStyle.Back, Enum.EasingDirection.Out), {
+            Size = UDim2.new(0, 200, 0, 240),
+            BackgroundTransparency = 0.15
+        }):Play()
+        TS:Create(fs, TweenInfo.new(0.4), {Transparency = 0.2}):Play()
+    end)
+
     return SG
 end
 
@@ -218,4 +394,4 @@ end
 controlScreenGui = build()
 W.states.isControl = true
 
-print("[control] Carregado")
+print("[control] Frosted Glass carregado")
