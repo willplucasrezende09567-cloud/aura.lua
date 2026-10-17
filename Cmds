@@ -6,6 +6,10 @@
 local W = _G.Willnzx
 if not W then warn("[cmds] Rode o gui_base primeiro"); return end
 
+-- ⬅️ TRAVA DE SEGURANÇA (Evita o erro "attempt to index nil")
+if not W.loaded then W.loaded = {} end
+if not W.toggles then W.toggles = {} end
+
 local CoreGui = W.CoreGui
 local TS = W.TS
 local LP = W.LP
@@ -24,8 +28,8 @@ local C = {
     muted     = Color3.fromRGB(150, 160, 180),
 }
 
+-- ⬅️ LISTA SEM O CMD_BAR 2
 local lista = {
-    {";cmdbar2", "Abre a barra de comando 2"},
     {";cmds", "Abre/fecha esta lista"},
     {";control", "Abre/fecha setas de chute"},
     {";farmcoins", "Abre o farm de coins"},
@@ -231,7 +235,6 @@ for _, item in ipairs(lista) do
     rc.Color = C.accent
     rc.Transparency = 0.6
 
-    -- Hover
     row.MouseEnter:Connect(function()
         TS:Create(row, TweenInfo.new(0.15), {BackgroundColor3 = Color3.fromRGB(240, 245, 255)}):Play()
         TS:Create(rc, TweenInfo.new(0.15), {Transparency = 0.2}):Play()
@@ -276,10 +279,7 @@ for _, item in ipairs(lista) do
 
     W.addTap(row, function()
         if W.processCommand then W.processCommand(item[1]) end
-        -- flash verde
-        TS:Create(row, TweenInfo.new(0.1), {
-            BackgroundColor3 = C.green
-        }):Play()
+        TS:Create(row, TweenInfo.new(0.1), {BackgroundColor3 = C.green}):Play()
         TS:Create(cmdL, TweenInfo.new(0.1), {TextColor3 = C.textLight}):Play()
         TS:Create(dL, TweenInfo.new(0.1), {TextColor3 = C.textLight}):Play()
         task.delay(0.2, function()
@@ -325,7 +325,6 @@ W.toggles.cmds = toggle
 W.addTap(MN, function()
     min = not min
     if min then
-        -- fade out do conteúdo
         TS:Create(CT, TweenInfo.new(0.15), {}):Play()
         CT.Visible = false; MN.Text = "+"
         TS:Create(CF, TweenInfo.new(0.35, Enum.EasingStyle.Quad, Enum.EasingDirection.Out), {Size = MIN}):Play()
