@@ -1,9 +1,28 @@
+-- ================================================================
+--   📜 Commands List — Frosted Glass Edition
+--   by: @willnzx.mt
+-- ================================================================
+
 local W = _G.Willnzx
 if not W then warn("[cmds] Rode o gui_base primeiro"); return end
 
 local CoreGui = W.CoreGui
 local TS = W.TS
 local LP = W.LP
+
+-- ⬅️ PALETA — Frosted Glass
+local C = {
+    bg        = Color3.fromRGB(245, 248, 255),
+    btnIdle   = Color3.fromRGB(255, 255, 255),
+    btnPress  = Color3.fromRGB(140, 180, 255),
+    textDark  = Color3.fromRGB(30, 40, 60),
+    textLight = Color3.fromRGB(255, 255, 255),
+    accent    = Color3.fromRGB(100, 150, 255),
+    purple    = Color3.fromRGB(180, 120, 255),
+    green     = Color3.fromRGB(80, 200, 140),
+    red       = Color3.fromRGB(255, 100, 120),
+    muted     = Color3.fromRGB(150, 160, 180),
+}
 
 local lista = {
     {";cmdbar2", "Abre a barra de comando 2"},
@@ -43,6 +62,9 @@ local lista = {
 
 pcall(function() CoreGui:FindFirstChild("WillnzxCmdsGUI"):Destroy() end)
 
+-- ================================================================
+--  SCREEN GUI
+-- ================================================================
 local SG = Instance.new("ScreenGui")
 SG.Name = "WillnzxCmdsGUI"
 SG.ResetOnSpawn = false
@@ -52,150 +74,283 @@ SG.Enabled = false
 pcall(function() SG.Parent = CoreGui end)
 if not SG.Parent then SG.Parent = LP:WaitForChild("PlayerGui") end
 
+-- ================================================================
+--  FRAME PRINCIPAL — Vidro Fosco
+-- ================================================================
 local CF = Instance.new("Frame")
 CF.Size = UDim2.new(0, 360, 0, 420)
 CF.Position = UDim2.new(0.5, -180, 0.5, -210)
-CF.BackgroundColor3 = Color3.fromRGB(15, 15, 25)
+CF.BackgroundColor3 = C.bg
 CF.BackgroundTransparency = 0.15
 CF.BorderSizePixel = 0
 CF.Active = true
-CF.Draggable = true
 CF.ClipsDescendants = true
 CF.Parent = SG
-local c1 = Instance.new("UICorner"); c1.CornerRadius = UDim.new(0, 12); c1.Parent = CF
-local c2 = Instance.new("UIStroke")
-c2.Thickness = 1.5; c2.Color = Color3.fromRGB(180, 0, 255); c2.Transparency = 0.2
-c2.ApplyStrokeMode = Enum.ApplyStrokeMode.Border; c2.Parent = CF
-local c3 = Instance.new("UIGradient")
-c3.Color = ColorSequence.new({
-    ColorSequenceKeypoint.new(0, Color3.fromRGB(25, 15, 40)),
-    ColorSequenceKeypoint.new(1, Color3.fromRGB(10, 15, 30)),
+Instance.new("UICorner", CF).CornerRadius = UDim.new(0, 16)
+
+local BgGrad = Instance.new("UIGradient", CF)
+BgGrad.Color = ColorSequence.new({
+    ColorSequenceKeypoint.new(0, Color3.fromRGB(255, 255, 255)),
+    ColorSequenceKeypoint.new(1, Color3.fromRGB(230, 240, 255))
 })
-c3.Rotation = 45; c3.Parent = CF
+BgGrad.Rotation = 45
 
+local c2 = Instance.new("UIStroke", CF)
+c2.Thickness = 1.5
+c2.Color = Color3.fromRGB(255, 255, 255)
+c2.Transparency = 0.2
+c2.ApplyStrokeMode = Enum.ApplyStrokeMode.Border
+
+-- ================================================================
+--  TÍTULO
+-- ================================================================
 local T = Instance.new("TextLabel")
-T.Size = UDim2.new(1, -90, 0, 22); T.Position = UDim2.new(0, 12, 0, 8)
-T.BackgroundTransparency = 1; T.Text = "📜 COMANDOS"
-T.TextColor3 = Color3.fromRGB(180, 0, 255); T.TextScaled = true
-T.Font = Enum.Font.GothamBold; T.TextXAlignment = Enum.TextXAlignment.Left; T.Parent = CF
+T.Size = UDim2.new(1, -90, 0, 22)
+T.Position = UDim2.new(0, 14, 0, 10)
+T.BackgroundTransparency = 1
+T.Text = "📜 COMANDOS"
+T.TextColor3 = C.textDark
+T.TextSize = 14
+T.Font = Enum.Font.GothamBold
+T.TextXAlignment = Enum.TextXAlignment.Left
+T.Parent = CF
 
-local MN = Instance.new("TextButton")
-MN.Size = UDim2.new(0, 26, 0, 26); MN.Position = UDim2.new(1, -62, 0, 8)
-MN.BackgroundColor3 = Color3.fromRGB(0, 0, 0); MN.BackgroundTransparency = 0.5
-MN.Text = "■"; MN.TextSize = 16; MN.TextColor3 = Color3.fromRGB(0, 230, 255)
-MN.Font = Enum.Font.GothamBold; MN.AutoButtonColor = false; MN.Parent = CF
-local mc = Instance.new("UICorner"); mc.CornerRadius = UDim.new(0, 5); mc.Parent = MN
+local Tg = Instance.new("UIGradient", T)
+Tg.Color = ColorSequence.new({
+    ColorSequenceKeypoint.new(0, Color3.fromRGB(80, 130, 230)),
+    ColorSequenceKeypoint.new(1, Color3.fromRGB(180, 100, 230)),
+})
 
-local CL = Instance.new("TextButton")
-CL.Size = UDim2.new(0, 26, 0, 26); CL.Position = UDim2.new(1, -32, 0, 8)
-CL.BackgroundColor3 = Color3.fromRGB(0, 0, 0); CL.BackgroundTransparency = 0.5
-CL.Text = "✕"; CL.TextSize = 16; CL.TextColor3 = Color3.fromRGB(255, 60, 60)
-CL.Font = Enum.Font.GothamBold; CL.AutoButtonColor = false; CL.Parent = CF
-local clc = Instance.new("UICorner"); clc.CornerRadius = UDim.new(0, 5); clc.Parent = CL
+-- ================================================================
+--  BOTÕES MINIMIZAR / FECHAR — Frosted
+-- ================================================================
+local function makeCtrlBtn(text, color, xOffset)
+    local btn = Instance.new("TextButton")
+    btn.Size = UDim2.new(0, 26, 0, 26)
+    btn.Position = UDim2.new(1, xOffset, 0, 8)
+    btn.BackgroundColor3 = C.btnIdle
+    btn.BackgroundTransparency = 0.3
+    btn.Text = text
+    btn.TextSize = 15
+    btn.TextColor3 = color
+    btn.Font = Enum.Font.GothamBold
+    btn.AutoButtonColor = false
+    btn.Parent = CF
+    Instance.new("UICorner", btn).CornerRadius = UDim.new(0, 8)
+    local s = Instance.new("UIStroke", btn)
+    s.Thickness = 1.2
+    s.Color = color
+    s.Transparency = 0.35
+    btn.MouseEnter:Connect(function()
+        TS:Create(btn, TweenInfo.new(0.2), {BackgroundTransparency = 0}):Play()
+        TS:Create(s, TweenInfo.new(0.2), {Transparency = 0.1}):Play()
+    end)
+    btn.MouseLeave:Connect(function()
+        TS:Create(btn, TweenInfo.new(0.2), {BackgroundTransparency = 0.3}):Play()
+        TS:Create(s, TweenInfo.new(0.2), {Transparency = 0.35}):Play()
+    end)
+    return btn
+end
 
+local MN = makeCtrlBtn("−", C.textDark, -62)
+local CL = makeCtrlBtn("×", C.red, -32)
+
+-- ================================================================
+--  ÁREA DE CONTEÚDO
+-- ================================================================
 local CT = Instance.new("Frame")
-CT.Size = UDim2.new(1, 0, 1, -38); CT.Position = UDim2.new(0, 0, 0, 38)
-CT.BackgroundTransparency = 1; CT.Parent = CF
+CT.Size = UDim2.new(1, 0, 1, -44)
+CT.Position = UDim2.new(0, 0, 0, 44)
+CT.BackgroundTransparency = 1
+CT.Parent = CF
 
 local HF = Instance.new("Frame")
-HF.Size = UDim2.new(1, -20, 0, 16); HF.Position = UDim2.new(0, 10, 0, 0)
-HF.BackgroundTransparency = 1; HF.Parent = CT
+HF.Size = UDim2.new(1, -24, 0, 16)
+HF.Position = UDim2.new(0, 12, 0, 2)
+HF.BackgroundTransparency = 1
+HF.Parent = CT
+
 local H1 = Instance.new("TextLabel")
-H1.Size = UDim2.new(0.42, 0, 1, 0); H1.Position = UDim2.new(0, 4, 0, 0)
-H1.BackgroundTransparency = 1; H1.Text = "COMANDO"
-H1.TextColor3 = Color3.fromRGB(150, 150, 180); H1.TextSize = 10
-H1.Font = Enum.Font.GothamBold; H1.TextXAlignment = Enum.TextXAlignment.Left; H1.Parent = HF
+H1.Size = UDim2.new(0.42, 0, 1, 0)
+H1.Position = UDim2.new(0, 4, 0, 0)
+H1.BackgroundTransparency = 1
+H1.Text = "COMANDO"
+H1.TextColor3 = C.muted
+H1.TextSize = 10
+H1.Font = Enum.Font.GothamBold
+H1.TextXAlignment = Enum.TextXAlignment.Left
+H1.Parent = HF
+
 local H2 = Instance.new("TextLabel")
-H2.Size = UDim2.new(0.56, 0, 1, 0); H2.Position = UDim2.new(0.43, 0, 0, 0)
-H2.BackgroundTransparency = 1; H2.Text = "CLIQUE PRA EXECUTAR"
-H2.TextColor3 = Color3.fromRGB(150, 150, 180); H2.TextSize = 10
-H2.Font = Enum.Font.GothamBold; H2.TextXAlignment = Enum.TextXAlignment.Left; H2.Parent = HF
+H2.Size = UDim2.new(0.56, 0, 1, 0)
+H2.Position = UDim2.new(0.43, 0, 0, 0)
+H2.BackgroundTransparency = 1
+H2.Text = "CLIQUE PRA EXECUTAR"
+H2.TextColor3 = C.muted
+H2.TextSize = 10
+H2.Font = Enum.Font.GothamBold
+H2.TextXAlignment = Enum.TextXAlignment.Left
+H2.Parent = HF
 
+-- ================================================================
+--  SCROLLING FRAME
+-- ================================================================
 local SCR = Instance.new("ScrollingFrame")
-SCR.Size = UDim2.new(1, -20, 1, -26); SCR.Position = UDim2.new(0, 10, 0, 20)
-SCR.BackgroundTransparency = 1; SCR.BorderSizePixel = 0
-SCR.ScrollBarThickness = 4; SCR.ScrollBarImageColor3 = Color3.fromRGB(180, 0, 255)
-SCR.CanvasSize = UDim2.new(0, 0, 0, 0); SCR.ScrollingDirection = Enum.ScrollingDirection.Y
-SCR.ElasticBehavior = Enum.ElasticBehavior.Never; SCR.Parent = CT
+SCR.Size = UDim2.new(1, -24, 1, -28)
+SCR.Position = UDim2.new(0, 12, 0, 22)
+SCR.BackgroundTransparency = 1
+SCR.BorderSizePixel = 0
+SCR.ScrollBarThickness = 4
+SCR.ScrollBarImageColor3 = C.accent
+SCR.ScrollBarImageTransparency = 0.3
+SCR.CanvasSize = UDim2.new(0, 0, 0, 0)
+SCR.ScrollingDirection = Enum.ScrollingDirection.Y
+SCR.ElasticBehavior = Enum.ElasticBehavior.Never
+SCR.Parent = CT
 
+-- ================================================================
+--  LINHAS DE COMANDO — Frosted
+-- ================================================================
 local y = 0
 for _, item in ipairs(lista) do
     local row = Instance.new("TextButton")
-    row.Size = UDim2.new(1, -5, 0, 28); row.Position = UDim2.new(0, 0, 0, y)
-    row.BackgroundColor3 = Color3.fromRGB(0, 0, 0); row.BackgroundTransparency = 0.6
-    row.BorderSizePixel = 0; row.Text = ""; row.AutoButtonColor = false
-    row.Active = true; row.Parent = SCR
-    local rc = Instance.new("UICorner"); rc.CornerRadius = UDim.new(0, 5); rc.Parent = row
+    row.Size = UDim2.new(1, -5, 0, 30)
+    row.Position = UDim2.new(0, 0, 0, y)
+    row.BackgroundColor3 = C.btnIdle
+    row.BackgroundTransparency = 0
+    row.BorderSizePixel = 0
+    row.Text = ""
+    row.AutoButtonColor = false
+    row.ClipsDescendants = true
+    row.Active = true
+    row.Parent = SCR
+    Instance.new("UICorner", row).CornerRadius = UDim.new(0, 8)
+
+    local rc = Instance.new("UIStroke", row)
+    rc.Thickness = 1
+    rc.Color = C.accent
+    rc.Transparency = 0.6
+
+    -- Hover
+    row.MouseEnter:Connect(function()
+        TS:Create(row, TweenInfo.new(0.15), {BackgroundColor3 = Color3.fromRGB(240, 245, 255)}):Play()
+        TS:Create(rc, TweenInfo.new(0.15), {Transparency = 0.2}):Play()
+    end)
+    row.MouseLeave:Connect(function()
+        TS:Create(row, TweenInfo.new(0.15), {BackgroundColor3 = C.btnIdle}):Play()
+        TS:Create(rc, TweenInfo.new(0.15), {Transparency = 0.6}):Play()
+    end)
+
     local cmdL = Instance.new("TextLabel")
-    cmdL.Size = UDim2.new(0.42, 0, 1, 0); cmdL.Position = UDim2.new(0, 6, 0, 0)
-    cmdL.BackgroundTransparency = 1; cmdL.Text = item[1]
-    cmdL.TextColor3 = Color3.fromRGB(0, 230, 255); cmdL.TextSize = 11
-    cmdL.Font = Enum.Font.Code; cmdL.TextXAlignment = Enum.TextXAlignment.Left; cmdL.Parent = row
+    cmdL.Size = UDim2.new(0.42, 0, 1, 0)
+    cmdL.Position = UDim2.new(0, 8, 0, 0)
+    cmdL.BackgroundTransparency = 1
+    cmdL.Text = item[1]
+    cmdL.TextColor3 = C.accent
+    cmdL.TextSize = 11
+    cmdL.Font = Enum.Font.Code
+    cmdL.TextXAlignment = Enum.TextXAlignment.Left
+    cmdL.Parent = row
+
     local ar = Instance.new("TextLabel")
-    ar.Size = UDim2.new(0, 12, 1, 0); ar.Position = UDim2.new(0.42, 0, 0, 0)
-    ar.BackgroundTransparency = 1; ar.Text = "»"; ar.TextColor3 = Color3.fromRGB(180, 0, 255)
-    ar.TextSize = 12; ar.Font = Enum.Font.GothamBold; ar.Parent = row
+    ar.Size = UDim2.new(0, 12, 1, 0)
+    ar.Position = UDim2.new(0.42, 0, 0, 0)
+    ar.BackgroundTransparency = 1
+    ar.Text = "»"
+    ar.TextColor3 = C.purple
+    ar.TextSize = 12
+    ar.Font = Enum.Font.GothamBold
+    ar.Parent = row
+
     local dL = Instance.new("TextLabel")
-    dL.Size = UDim2.new(0.56, -10, 1, 0); dL.Position = UDim2.new(0.44, 0, 0, 0)
-    dL.BackgroundTransparency = 1; dL.Text = item[2]
-    dL.TextColor3 = Color3.fromRGB(220, 220, 240); dL.TextSize = 11
-    dL.Font = Enum.Font.Gotham; dL.TextXAlignment = Enum.TextXAlignment.Left; dL.Parent = row
+    dL.Size = UDim2.new(0.56, -10, 1, 0)
+    dL.Position = UDim2.new(0.44, 0, 0, 0)
+    dL.BackgroundTransparency = 1
+    dL.Text = item[2]
+    dL.TextColor3 = C.textDark
+    dL.TextSize = 11
+    dL.Font = Enum.Font.Gotham
+    dL.TextXAlignment = Enum.TextXAlignment.Left
+    dL.TextTruncate = Enum.TextTruncate.AtEnd
+    dL.Parent = row
+
     W.addTap(row, function()
         if W.processCommand then W.processCommand(item[1]) end
-        local oc = row.BackgroundColor3
-        row.BackgroundColor3 = Color3.fromRGB(0, 255, 100)
-        TS:Create(row, TweenInfo.new(0.3), {BackgroundColor3 = oc}):Play()
+        -- flash verde
+        TS:Create(row, TweenInfo.new(0.1), {
+            BackgroundColor3 = C.green
+        }):Play()
+        TS:Create(cmdL, TweenInfo.new(0.1), {TextColor3 = C.textLight}):Play()
+        TS:Create(dL, TweenInfo.new(0.1), {TextColor3 = C.textLight}):Play()
+        task.delay(0.2, function()
+            TS:Create(row, TweenInfo.new(0.3), {BackgroundColor3 = C.btnIdle}):Play()
+            TS:Create(cmdL, TweenInfo.new(0.3), {TextColor3 = C.accent}):Play()
+            TS:Create(dL, TweenInfo.new(0.3), {TextColor3 = C.textDark}):Play()
+        end)
     end)
-    y = y + 32
+
+    y = y + 34
 end
 SCR.CanvasSize = UDim2.new(0, 0, 0, y + 5)
 
+-- ================================================================
+--  TOGGLE / MINIMIZE / CLOSE
+-- ================================================================
 local visible, min = true, false
 local FULL = UDim2.new(0, 360, 0, 420)
-local MIN = UDim2.new(0, 360, 0, 42)
+local MIN = UDim2.new(0, 360, 0, 46)
 
 local function toggle()
     visible = not visible
     if visible then
         SG.Enabled = true; min = false
-        MN.Text = "■"; CT.Visible = true
+        MN.Text = "−"; CT.Visible = true
         CF.Size = UDim2.new(0, 0, 0, 0); CF.Position = UDim2.new(0.5, 0, 0.5, 0)
         CF.BackgroundTransparency = 1; c2.Transparency = 1
-        TS:Create(CF, TweenInfo.new(0.3, Enum.EasingStyle.Back, Enum.EasingDirection.Out), {
+        TS:Create(CF, TweenInfo.new(0.35, Enum.EasingStyle.Back, Enum.EasingDirection.Out), {
             Size = FULL, Position = UDim2.new(0.5, -180, 0.5, -210), BackgroundTransparency = 0.15,
         }):Play()
         TS:Create(c2, TweenInfo.new(0.35), {Transparency = 0.2}):Play()
     else
-        local tw = TS:Create(CF, TweenInfo.new(0.2, Enum.EasingStyle.Back, Enum.EasingDirection.In), {
+        local tw = TS:Create(CF, TweenInfo.new(0.25, Enum.EasingStyle.Back, Enum.EasingDirection.In), {
             Size = UDim2.new(0, 0, 0, 0), Position = UDim2.new(0.5, 0, 0.5, 0), BackgroundTransparency = 1,
         })
-        tw:Play(); TS:Create(c2, TweenInfo.new(0.2), {Transparency = 1}):Play()
+        tw:Play(); TS:Create(c2, TweenInfo.new(0.25), {Transparency = 1}):Play()
         tw.Completed:Wait(); SG.Enabled = false
     end
 end
 
 W.toggles.cmds = toggle
+
 W.addTap(MN, function()
     min = not min
     if min then
-        CT.Visible = false; MN.Text = "▢"
-        TS:Create(CF, TweenInfo.new(0.3, Enum.EasingStyle.Quad, Enum.EasingDirection.Out), {Size = MIN}):Play()
+        -- fade out do conteúdo
+        TS:Create(CT, TweenInfo.new(0.15), {}):Play()
+        CT.Visible = false; MN.Text = "+"
+        TS:Create(CF, TweenInfo.new(0.35, Enum.EasingStyle.Quad, Enum.EasingDirection.Out), {Size = MIN}):Play()
     else
-        CT.Visible = true; MN.Text = "■"
-        TS:Create(CF, TweenInfo.new(0.3, Enum.EasingStyle.Quad, Enum.EasingDirection.Out), {Size = FULL}):Play()
+        CT.Visible = true; MN.Text = "−"
+        TS:Create(CF, TweenInfo.new(0.35, Enum.EasingStyle.Quad, Enum.EasingDirection.Out), {Size = FULL}):Play()
     end
 end)
+
 W.addTap(CL, function()
     if visible then toggle() end
 end)
 
+-- ================================================================
+--  ANIMAÇÃO DE ABERTURA
+-- ================================================================
 SG.Enabled = true
 CT.Visible = true
-CF.Size = UDim2.new(0, 0, 0, 0); CF.Position = UDim2.new(0.5, 0, 0.5, 0)
-CF.BackgroundTransparency = 1; c2.Transparency = 1
-TS:Create(CF, TweenInfo.new(0.3, Enum.EasingStyle.Back, Enum.EasingDirection.Out), {
+CF.Size = UDim2.new(0, 0, 0, 0)
+CF.Position = UDim2.new(0.5, 0, 0.5, 0)
+CF.BackgroundTransparency = 1
+c2.Transparency = 1
+TS:Create(CF, TweenInfo.new(0.5, Enum.EasingStyle.Back, Enum.EasingDirection.Out), {
     Size = FULL, Position = UDim2.new(0.5, -180, 0.5, -210), BackgroundTransparency = 0.15,
 }):Play()
-TS:Create(c2, TweenInfo.new(0.35), {Transparency = 0.2}):Play()
+TS:Create(c2, TweenInfo.new(0.4), {Transparency = 0.2}):Play()
 
-print("[cmds] Carregado")
+print("[cmds] Frosted Glass carregado")
